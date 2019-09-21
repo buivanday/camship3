@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>837941542195-pdhctl2i4cni2nu0hp7njn6sj83f5f76.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.837941542195-pdhctl2i4cni2nu0hp7njn6sj83f5f76</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCvFoNUWIp22MGiea2p1vMz8dqpYgU4YVw</string>
+	<key>GCM_SENDER_ID</key>
+	<string>837941542195</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.farax.camships</string>
+	<key>PROJECT_ID</key>
+	<string>camships-9bbbd</string>
+	<key>STORAGE_BUCKET</key>
+	<string>camships-9bbbd.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:837941542195:ios:ad88e53ea106b1cc</string>
+	<key>DATABASE_URL</key>
+	<string>https://camships-9bbbd.firebaseio.com</string>
+</dict>
+</plist>

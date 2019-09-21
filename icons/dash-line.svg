@@ -1,0 +1,5 @@
+<svg height="5" width="500">
+  <g fill="none" stroke="black" stroke-width="1">
+    <path stroke-dasharray="10" d="M5 20 l215 0" />
+  </g>
+</svg>
