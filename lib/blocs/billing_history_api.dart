@@ -71,8 +71,9 @@ class BillingHistoryModel {
   final double totalFailed;
   final double totalCOD;
   final double totalShippingFee;
+  final double totalPending;
   
-  BillingHistoryModel({this.date, this.orders, this.totalCOD, this.totalCompleted, this.totalFailed, this.totalShippingFee});
+  BillingHistoryModel({this.date, this.orders, this.totalCOD, this.totalCompleted, this.totalFailed, this.totalShippingFee, this.totalPending});
   
   factory BillingHistoryModel.fromJson(Map<String, dynamic> json) {
     return BillingHistoryModel(
@@ -83,7 +84,8 @@ class BillingHistoryModel {
       totalCOD: json['totalCOD'].toDouble() as double,
       totalCompleted: json['totalCompleted'].toDouble() as double,
       totalFailed: json['totalFailed'].toDouble() as double,
-      totalShippingFee: json['totalShippingFee'].toDouble() as double
+      totalShippingFee: json['totalShippingFee'].toDouble() as double,
+      totalPending: json['totalPending'].toDouble() as double
     );
   }
 }

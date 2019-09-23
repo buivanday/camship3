@@ -287,7 +287,7 @@ class _CodState extends State<Cod> {
                                                             child: Image.asset('icons/coin.png'),
                                                           ),
                                                           SizedBox(width: 10,),
-                                                          Text(allTranslations.text('not_cashed_out'), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14),),
+                                                          Text(allTranslations.text('on_shipping'), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14),),
                                                         ],
                                                       ),
                                                     ),

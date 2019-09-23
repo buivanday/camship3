@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farax/components/hex_color.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -195,7 +196,6 @@ Future _uploadAvatar() async {
                       return Text('error');
                     } else {
                       String _av = snapshot.data['avatar'];
-                      Image avatar = _av != null && _av != '' ? Image.network('https://camships.com:3000/api/attachments/camship/download/${_av}?v=' + new DateTime.now().millisecondsSinceEpoch.toString(),fit: BoxFit.contain) : Image.asset('icons/logo.png', fit: BoxFit.contain);
                       return Stack(
                       children: <Widget>[
                         Container(
@@ -368,7 +368,11 @@ Future _uploadAvatar() async {
                                       onTap: () {
                                         _settingModalBottomSheet(context);
                                       },
-                                      child: _avatar == null ? avatar : Image.file(_avatar, fit: BoxFit.fitWidth,),
+                                      child: _avatar == null ? CachedNetworkImage(
+                                        imageUrl: "https://camships.com:3000/api/attachments/compressed/download/" + (_av == null ? 'logo.png' : _av),
+                                        placeholder: (context, url) => new Center(child: CircularProgressIndicator(),),
+                                        errorWidget: (context, url, error) => new Icon(Icons.error),
+                                      ) : Image.file(_avatar, fit: BoxFit.fitWidth,),
                                     )
                                   )
                                 ),

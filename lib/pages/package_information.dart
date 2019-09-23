@@ -107,7 +107,7 @@ class _PackageInformationState extends State<PackageInformation> {
                                           Flexible(
                                               flex: 3,
                                               fit: FlexFit.loose,
-                                              child: Text(orderPackages['packageType']['name'], style: TextStyle(color: HexColor('#455A64'), fontSize: 14), textAlign: TextAlign.left)
+                                              child: Text(allTranslations.text(orderPackages['packageType']['name']), style: TextStyle(color: HexColor('#455A64'), fontSize: 14), textAlign: TextAlign.left)
                                           )
                                         ],
                                       ),

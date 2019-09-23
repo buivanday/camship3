@@ -23,11 +23,18 @@ class AlmostDoneItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> list = new List<Widget>();
+    List<Widget> _listReturnedItems = new List<Widget>();
     for(var i = 0; i < order['orderPackages']['items'].length; i ++) {
       dynamic orderItems = order['orderPackages']['items'][i];
       orderItems['index'] = i;
       list.add(new ReturnedOrderItem(item: orderItems));
+      if(orderItems['returnAmount'] > 0 ) {
+        _listReturnedItems.add(new ItemNeedReturned(item: orderItems));
+      }
     }
+    print(_listReturnedItems.length);
+
+    
     return InkWell(
       onTap: () {
         ShopOrder o = ShopOrder.fromJson(order);
@@ -68,7 +75,7 @@ class AlmostDoneItem extends StatelessWidget {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        Chip(label: Text(allTranslations.text(order['currentStatusValue'] == 7 || order['currentStatusValue'] == 14 ? 'almost_done' : 'money_back'), 
+                        Chip(label: Text(allTranslations.text(order['currentStatusValue'] == 7 || order['currentStatusValue'] == 14 ? 'almost_done' : order['currentStatusValue'] == 9 ? 'shipping_failed' : order['currentStatusValue'] == 5 ? (order['lastStatusValue'] == 4 ? 'shipping_to_warehouse' : 'return_to_warehouse') : 'money_back'), 
                         style: TextStyle(color: Color.fromRGBO(38, 154, 202, 1))), 
                         backgroundColor: Color.fromRGBO(223, 243, 249, 1),),
                         Text(convertDateFromString(replaceTAndZ(order['updatedOn'])), style: TextStyle(
@@ -100,9 +107,17 @@ class AlmostDoneItem extends StatelessWidget {
                 opacity: 0.0,
               ),
             ) : order['orderPackages']['extraService'] == 'express' ? 
-            SizedBox(height: 25) : ExpansionTile(
-              title: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text(allTranslations.text('items_title'), style: TextStyle(color: Color.fromRGBO(96, 191, 223, 1), fontSize: 14),),),
-              children: list,
+            SizedBox(height: 25) : Column(
+              children: <Widget>[
+                ExpansionTile(
+                  title: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text(allTranslations.text('items_title'), style: TextStyle(color: Color.fromRGBO(96, 191, 223, 1), fontSize: 14),),),
+                  children: list,
+                ),
+                _listReturnedItems != null && _listReturnedItems.length > 0 ? ExpansionTile(
+                  title: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text(allTranslations.text('item_returned'), style: TextStyle(color: Color.fromRGBO(96, 191, 223, 1), fontSize: 14),),),
+                  children: _listReturnedItems,
+                ) : Container()
+              ],
             ), 
           ],
         ),
@@ -136,7 +151,60 @@ class ReturnedOrderItem extends StatelessWidget {
                 Text(item['price'].toString() + ' ' + allTranslations.text('usd_per_item'), style: TextStyle(color: Color.fromRGBO(146, 165, 174, 1)),)
               ],
             ),
-            Text('x' + item['amount'].toString())
+             Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text(allTranslations.text('total') + ': '),
+                    Text('x' + item['amount'].toString()),
+                  ],
+                ),
+                SizedBox(height: 10,),
+                item['returnAmount'] != null && item['returnAmount'] > 0 ? Row(
+                  children: <Widget>[
+                    Text(allTranslations.text('returned_amount') + ': ', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14.0)),
+                    Text('x' + item['returnAmount'].toString(), style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16.0),)
+                  ],
+                ) : Container(),
+                
+              ],
+            ) ,
+            
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ItemNeedReturned extends StatelessWidget {
+  const ItemNeedReturned({
+    Key key,
+    @required this.item,
+  }) : super(key: key);
+
+  final dynamic item;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: item['index'] % 2 == 0 ? Color.fromRGBO(248, 248, 248, 1) : Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 25),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Text(item['name'], style: TextStyle(color: Color.fromRGBO(80, 101, 110, 1)),),
+                SizedBox(height: 10,),
+                Text(item['price'].toString() + ' ' + allTranslations.text('usd_per_item'), style: TextStyle(color: Color.fromRGBO(146, 165, 174, 1)),)
+              ],
+            ),
+            Text('x' + item['returnAmount'].toString(), style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 16.0),)
+            
           ],
         ),
       ),

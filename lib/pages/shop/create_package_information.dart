@@ -101,6 +101,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
   String textStepLastActive1 = '1';
   String textStepLastActive3 = '3';
   bool isOffline = false;
+  bool _isReceiverPayIfNotReceived = false;
 
    //String _regExp='^\d{0,6}(\.\d{0,2})?\$';
   CreatePackageSharePreference createPackageInformationSharePreference = new CreatePackageSharePreference();
@@ -213,6 +214,12 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
     setState(() {
       packageType = value;
       //createPackageInformationSharePreference.setPackageType(value);
+    });
+  }
+
+  _handleChangeRadioReceiverPay(value) {
+    setState(() {
+      _isReceiverPayIfNotReceived = value;
     });
   }
 
@@ -757,6 +764,26 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                   onChanged: (value){
                                     //createPackageInformationSharePreference.setNoteTxt(value);
                                   },
+                                ),
+                              ),
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    _isReceiverPayIfNotReceived = !_isReceiverPayIfNotReceived;
+                                  });
+                                },
+                                child: Row(
+                                  children: <Widget>[
+                                    Checkbox(
+                                      value: _isReceiverPayIfNotReceived,
+                                      onChanged: _handleChangeRadioReceiverPay,
+                                      activeColor: HexColor('#0099CC'),
+                                    ),
+                                    Expanded(
+                                      flex: 1,
+                                      child: Text(allTranslations.text('note_receiver_must_pay_if_not_receive'), style: TextStyle(color: HexColor('#455A64')),),
+                                    )
+                                  ],
                                 ),
                               ),
                               Padding(

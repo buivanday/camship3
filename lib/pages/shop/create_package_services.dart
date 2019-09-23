@@ -617,7 +617,7 @@ class _CodItemState extends State<CodItem> {
             textInputAction: TextInputAction.next,
             inputFormatters: [WhitelistingTextInputFormatter.digitsOnly],
             decoration: InputDecoration(
-              hintText: allTranslations.text('amount'),
+              hintText: allTranslations.text('quantity'),
               hintStyle: TextStyle(color: HexColor('#90A4AE'), fontSize: 14),
             ),
             keyboardType: TextInputType.numberWithOptions(decimal: true,signed: false),

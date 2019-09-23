@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:farax/pages/delivery_customer.dart';
 import 'package:farax/pages/delivery_warehouse.dart';
 import 'package:farax/pages/order_detail.dart';
+import 'package:farax/utils/auth_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,6 +36,9 @@ class _OrderItemState extends State<OrderItem> with TickerProviderStateMixin {
 
   final int maximumMinutes = 45 * 60;
   double percents = 0;
+  bool _isChosen = false;
+  Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
+  SharedPreferences _sharedPreferences;
   replaceTAndZ(String time) => time.replaceAll('T',' ').replaceAll('Z', ' ').substring(0, time.length - 5);
 
   AnimationController animationController;
@@ -80,6 +84,13 @@ class _OrderItemState extends State<OrderItem> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
+    if(mounted) {
+      setState(() {
+        _isChosen = widget.order['isChosen'];
+      });
+    } else {
+      _isChosen = widget.order['isChosen'];
+    }
     if(widget.isGoToDeliveringPage == true) {
       if(widget.order['timeReceived'] != null) {
         final acceptedTime = DateTime.parse(replaceTAndZ(widget.order['timeReceived'])).add(new Duration(hours: 7));
@@ -193,6 +204,19 @@ class _OrderItemState extends State<OrderItem> with TickerProviderStateMixin {
     
   }
 
+  Future _choose() async {
+    
+    _sharedPreferences = await _prefs;
+    String authToken = AuthUtils.getToken(_sharedPreferences);
+    var response = await NetworkUtils.post(authToken, '/api/Orders/${widget.order['id']}/delivering/choose');
+    if(response != null) {
+      print(response);
+      setState(() {
+        _isChosen = !_isChosen;
+      });
+    }
+  }
+
   @override
   void dispose() {
     animationController.stop();
@@ -243,16 +267,25 @@ class _OrderItemState extends State<OrderItem> with TickerProviderStateMixin {
                           color: Colors.black
                         ))
                       ],),
-                      InkWell(
-                        onTap: () {},
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-                          decoration: BoxDecoration(
-                            color: Color.fromRGBO(245, 245, 245, 1),
-                            borderRadius: BorderRadius.all(Radius.circular(4.0))
+                      Row(
+                        children: <Widget>[
+                          InkWell(
+                            onTap: _choose,
+                            child: Icon(Icons.star, color: _isChosen ? Colors.red : Colors.black,),
                           ),
-                          child: Text(widget.order['currentStatusValue'] == 11 ? allTranslations.text('return') : widget.order['delivery']['time'].toString() + 'h', style: TextStyle(color: Color.fromRGBO(97, 184, 101, 1)),),
-                        ),
+                          SizedBox(width: 8.0),
+                          InkWell(
+                            onTap: () {},
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
+                              decoration: BoxDecoration(
+                                color: Color.fromRGBO(245, 245, 245, 1),
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))
+                              ),
+                              child: Text(widget.order['currentStatusValue'] == 11 ? allTranslations.text('return') : widget.order['delivery']['time'].toString() + 'h', style: TextStyle(color: Color.fromRGBO(97, 184, 101, 1)),),
+                            ),
+                          )
+                        ],
                       )
                     ],
                   ),
@@ -308,7 +341,7 @@ class _OrderItemState extends State<OrderItem> with TickerProviderStateMixin {
                         widget.order['currentStatusValue'] == 15 ? (widget.order['lastStatusValue'] == 6 ? DeliveryCustomer(order: widget.order,isPending: true,) : 
                         (widget.order['lastStatusValue'] == 5 ? DeliveryWarehouse(order: widget.order) : OrderDetail(order: widget.order,isPending: true,))) : OrderDetail(order: widget.order,isPending: false,)
                       ) : 
-                      widget.order['currentStatusValue'] == 11 ? DeliveryCustomer(order: widget.order, isReturned: true,) : (widget.order['delivery']['time'] < 24 ? DeliveryCustomer(order: widget.order) : widget.order['currentStatusValue'] == 6 ? DeliveryCustomer(order: widget.order,) : DeliveryWarehouse(order: widget.order))
+                      widget.order['currentStatusValue'] == 11 || (widget.order['currentStatusValue'] == 15 && widget.order['lastStatusValue'] == 11) ? DeliveryCustomer(order: widget.order, isReturned: true,) : (widget.order['delivery']['time'] < 24 ? DeliveryCustomer(order: widget.order) : widget.order['currentStatusValue'] == 6 ? DeliveryCustomer(order: widget.order,) : DeliveryWarehouse(order: widget.order))
                     ));
                   },
                   child: Padding(
@@ -556,7 +589,7 @@ class  OrderInformation extends StatelessWidget {
         phoneNumber = '+855 23 695 9999';
       }
     } else {
-      if(isGoToDeliveringPage == true) {
+      if(isGoToDeliveringPage == true && currentStatusValue != 11) {
         title = Text(allTranslations.text('customer_address'));
         fullName = receiverInformation['fullName'];
         address = receiverInformation['address'];
@@ -589,9 +622,9 @@ class  OrderInformation extends StatelessWidget {
             )),
             SizedBox(height: 13),
            SizedBox(
-    width: MediaQuery.of(context).size.width * 0.7,
-    child: Text(address,
-                overflow: TextOverflow.fade)),
+            width: MediaQuery.of(context).size.width * 0.7,
+            child: Text(address, overflow: TextOverflow.fade)
+            ),
             SizedBox(height: 13),
             Text(phoneNumber)
           ],

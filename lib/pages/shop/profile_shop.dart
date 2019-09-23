@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farax/all_translations.dart';
 import 'package:farax/components/fab_bar.dart';
 import 'package:farax/components/gradient_appbar.dart';
@@ -144,8 +145,11 @@ class _ProfileShopState extends State<ProfileShop> {
                       return Text('error');
                     } else {
                       String _avatar = snapshot.data['avatar'];
-                      Image avatar = _avatar != null && _avatar != '' ? Image.network('https://camships.com:3000/api/attachments/camship/download/${_avatar}?v=' + new DateTime.now().millisecondsSinceEpoch.toString(),fit: BoxFit.contain) : Image.asset('icons/logo.png', fit: BoxFit.contain);
-                      return Container(
+                      return InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/profile-detail');
+                        },
+                        child: Container(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           children: <Widget>[
@@ -162,7 +166,11 @@ class _ProfileShopState extends State<ProfileShop> {
                                     ),
                                     child: ClipRRect(
                                       borderRadius: BorderRadius.all(Radius.circular(10)),
-                                      child: avatar
+                                      child: CachedNetworkImage(
+                                        imageUrl: "https://camships.com:3000/api/attachments/compressed/download/" + (_avatar == null ? 'logo.png' : _avatar),
+                                        placeholder: (context, url) => new Center(child: CircularProgressIndicator(),),
+                                        errorWidget: (context, url, error) => new Icon(Icons.error),
+                                      ) 
                                     )
                                   ),
                                 ),
@@ -198,6 +206,7 @@ class _ProfileShopState extends State<ProfileShop> {
 
                           ],
                         ),
+                      ),
                       );
                     }
                   }

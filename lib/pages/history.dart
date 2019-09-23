@@ -1,5 +1,7 @@
+import 'package:farax/components/returned_item.dart';
 import 'package:farax/pages/failed_screen.dart';
 import 'package:farax/pages/profile.dart';
+import 'package:farax/pages/returned_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_text/gradient_text.dart';
 import '../all_translations.dart';
@@ -66,7 +68,7 @@ class _HistoryState extends State<History> {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 2,
+      length: 3,
       child: Scaffold(
         body: Container(
           child: Column(
@@ -83,7 +85,7 @@ class _HistoryState extends State<History> {
                       children: <Widget>[
                         Icon(Icons.check, color: Colors.green),
                         SizedBox(width: 8,),
-                        Text(allTranslations.text('completed'))
+                        Text(allTranslations.text('completed'), style: TextStyle(fontSize: 12.0),)
                       ],
                     ),),
                     Tab(child: Row(
@@ -91,7 +93,15 @@ class _HistoryState extends State<History> {
                       children: <Widget>[
                         Icon(Icons.block, color: Color.fromRGBO(160, 176, 185, 1)),
                         SizedBox(width: 8,),
-                        Text(allTranslations.text('failed'))
+                        Text(allTranslations.text('failed'), style: TextStyle(fontSize: 12.0))
+                      ],
+                    ),),
+                    Tab(child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Icon(Icons.receipt, color: Color.fromRGBO(160, 176, 185, 1)),
+                        SizedBox(width: 8,),
+                        Text(allTranslations.text('returned'), style: TextStyle(fontSize: 12.0))
                       ],
                     ),),
                   ],
@@ -102,6 +112,7 @@ class _HistoryState extends State<History> {
                   children: <Widget>[
                     CompletedScreen(),
                     FailedScreen(),
+                    ReturnedScreen(),
                   ],
                 ),
               )

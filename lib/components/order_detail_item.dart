@@ -41,10 +41,14 @@ class OrderDetailItem extends StatelessWidget  {
   @override
   Widget build(BuildContext context) {
     List<Widget> list = new List<Widget>();
+    List<Widget> _listReturnedItems = new List<Widget>();
     for(var i = 0; i < order['orderPackages']['items'].length; i ++) {
       dynamic orderItems = order['orderPackages']['items'][i];
       orderItems['index'] = i;
       list.add(new ReturnedOrderItem(item: orderItems));
+      if(orderItems['returnAmount'] > 0 ) {
+        _listReturnedItems.add(new ItemNeedReturned(item: orderItems));
+      }
     }
     return Container(
       decoration: BoxDecoration(
@@ -110,10 +114,78 @@ class OrderDetailItem extends StatelessWidget  {
               )
           ),
           order['orderPackages']['extraService'] == 'express' ? 
-          SizedBox(height: 25) : ExpansionTile(
-            title: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text(allTranslations.text('items_title'), style: TextStyle(color: Color.fromRGBO(96, 191, 223, 1), fontSize: 14),),),
-            children: list,
-          ), 
+          SizedBox(height: 25) : Column(
+              children: <Widget>[
+                
+                SizedBox(height: 16.0,),
+                order['pendingReason'] != null && order['pendingReason'] != '' ? Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color.fromRGBO(231, 235, 238, 1))
+                    )
+                  ),
+                ) : Container(),
+                order['pendingReason'] != null && order['pendingReason'] != '' ? SizedBox(height: 16.0,) : Container(),
+                order['pendingReason'] != null && order['pendingReason'] != '' ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                  child: order['pendingReason'] != null && order['pendingReason'] != '' ? Row(children: <Widget>[
+                    Expanded(
+                      flex: 2,
+                      child: Text(allTranslations.text('pending_reason') + ': ', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ), 
+                    Expanded(
+                      flex: 3,
+                      child: Text(order['pendingReason'], overflow: TextOverflow.fade),
+                    )
+                    
+                    
+                  ],) : Container(),
+                ) : Container(),
+                order['failedReasonFull'] != null && order['failedReasonFull'] != '' ? SizedBox(height: 8.0,) : Container(),
+                order['failedReasonFull'] != null && order['failedReasonFull'] != '' ? Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 22.0),
+                  child: order['failedReasonFull'] != null && order['failedReasonFull'] != '' ? SizedBox(
+                      child: Row(children: <Widget>[
+                        Expanded(
+                          flex: 2,
+                          child: Text(allTranslations.text('fail_reason') + ': ', style: TextStyle(fontWeight: FontWeight.bold),),
+                        ), 
+                        Expanded(
+                          flex: 3,
+                          child: Text(order['failedReasonFull'], overflow: TextOverflow.fade),
+                        )
+                      ]
+                    )
+                  ): Container(),
+                ) : Container(),
+                SizedBox(height: 8.0,),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color.fromRGBO(231, 235, 238, 1))
+                    )
+                  ),
+                ),
+                ExpansionTile(
+                  title: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text(allTranslations.text('items_title'), style: TextStyle(color: Color.fromRGBO(96, 191, 223, 1), fontSize: 14),),),
+                  children: list,
+                ),
+                _listReturnedItems != null && _listReturnedItems.length > 0 ? Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: Color.fromRGBO(231, 235, 238, 1))
+                    )
+                  ),
+                ) : Container(),
+                _listReturnedItems != null && _listReturnedItems.length > 0 ? ExpansionTile(
+                  title: Padding(padding: const EdgeInsets.symmetric(horizontal: 8), child: Text(allTranslations.text('item_returned'), style: TextStyle(color: Colors.red, fontSize: 14),),),
+                  children: _listReturnedItems,
+                ) : Container()
+              ],
+            ), 
           Row(
             children: <Widget>[
               isReturnToWareHouse == false ? Expanded(

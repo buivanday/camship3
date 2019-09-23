@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.1.4</string>
+	<string>1.1.5</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -27,7 +27,7 @@
 		<dict/>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2</string>
+	<string>3</string>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<string>NO</string>
 	<key>LSApplicationQueriesSchemes</key>
@@ -39,16 +39,26 @@
 	<true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key>
 	<false/>
+	<key>NSAppleMusicUsageDescription</key>
+	<string>We need to access your Apple music</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>We need to access your calendar to help you check monthly orders</string>
 	<key>NSCameraUsageDescription</key>
 	<string>We need to access your camera to take a picture to upload avatar</string>
+	<key>NSContactsUsageDescription</key>
+	<string>We need to access your contacts to use in our app</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>Your location is required to get your current zone in order to get exactly shipping price and create your store</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Your location is required to get your current zone in order to get exactly shipping price and create your store</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>We need to access your microphone to make sure you a real person</string>
+	<key>NSMotionUsageDescription</key>
+	<string>We need to access your device’s accelerometer to use in our app</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We need to access your photo library to upload avatar</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We need the speech recognition permission</string>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

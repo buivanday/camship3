@@ -11,11 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:http/http.dart' as http;
 import '../../all_translations.dart';
-//import 'billing_history.dart';
-//import 'create_package.dart';
-//import 'home_shop.dart';
 import 'dart:convert';
-//import 'notification_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:farax/services/connectivity.dart';
 import '../../components/offline_notification.dart';
@@ -48,7 +44,7 @@ class _IncomeState extends State<Income> {
 	void initState() {
 		super.initState();
 		_fetchSessionAndNavigate();
-    print(_selectedIndex);
+    _getAccount();
 	}
 
   _fetchSessionAndNavigate() async {
@@ -64,9 +60,7 @@ class _IncomeState extends State<Income> {
   _logout() {
 		NetworkUtils.logoutUser(_scaffoldKey.currentContext, _sharedPreferences);
 	}
-  _saveLocal(){
-    //_sharedPreferences =await _prefs;
-  }
+
   void _onItemTapped(int index) {
    setState(() {
       _selectedIndex = index;
@@ -112,21 +106,19 @@ class _IncomeState extends State<Income> {
     }
   }
 
-  Future<List<dynamic>> _getAccount() async {
+  Future<dynamic> _getAccount() async {
     _sharedPreferences = await _prefs;
-    String userId = _sharedPreferences.getString('user_id');
-    return http.get('https://camships.com:3000/api/Accounts?filter={"where": {"memberId": "${userId}"}}').then((response) => json.decode(response.body));
+    String authToken = AuthUtils.getToken(_sharedPreferences);
+    var _account = await NetworkUtils.fetch(authToken, '/api/Members/income');
+    if(mounted) {
+      setState(() {
+        account = _account;
+      });
+    } else {
+      account = _account;
+    }
   }
-   Future<List<dynamic>> _refresh()async{
-     Completer<Null> completer = Completer<Null>();
-     new Future.delayed(Duration(seconds: 1)).then((_){
-       completer.complete(); 
-       setState(() {
-        account = _getAccount(); 
-       });
-     });
-     return  completer.future;
-   }
+  
   @override
   Widget build(BuildContext context) {
      var network = Provider.of<ConnectionStatus>(context);
@@ -156,210 +148,152 @@ class _IncomeState extends State<Income> {
                     child:    Column(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: <Widget>[
-                        // FutureBuilder(
-                        //   //future: ,
-                        //   builder: (BuildContext context, AsyncSnapshot<List<dynamic>> snapshot) {
-                        //     switch (snapshot.connectionState) {
-                        //       case ConnectionState.none:
-                        //         return new Text(allTranslations.text('something_wrong'));
-                        //       case ConnectionState.waiting:
-                        //         return new Center(child: CircularProgressIndicator(),);
-                        //       case ConnectionState.active:
-                        //         return new Text('');
-                        //       case ConnectionState.done:
-                        //         if(snapshot.hasError) {
-                        //           return new Text(
-                        //             '${snapshot.error}',
-                        //             style: TextStyle(color: Colors.red),
-                        //           );
-                        //         } else {
-                        //           account = snapshot.data[0];
-                        //           return 
-                                  RefreshIndicator(
-                                    onRefresh: _refresh,
-                                  child: SingleChildScrollView(
-                                    physics: AlwaysScrollableScrollPhysics(),
-                                   child: Column(
+                        RefreshIndicator(
+                          onRefresh: _getAccount,
+                        child: SingleChildScrollView(
+                          physics: AlwaysScrollableScrollPhysics(),
+                          child: Column(
+                          children: <Widget>[
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        CircleAvatar(
+                                          backgroundColor: Color.fromRGBO(255, 153, 51, 0.2),
+                                          child: Image.asset('icons/income.png'),
+                                        ),
+                                        SizedBox(width: 10,),
+                                        Text(allTranslations.text('total_completed_bills')
+                                        , style: TextStyle(color: HexColor('#FF9933'), fontSize: 14),),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: <Widget>[
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(Radius.circular(4.0))
-                                        ),
-                                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  CircleAvatar(
-                                                    backgroundColor: Color.fromRGBO(255, 153, 51, 0.2),
-                                                    child: Image.asset('icons/income.png'),
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Text(allTranslations.text('income')
-                                                  , style: TextStyle(color: HexColor('#FF9933'), fontSize: 14),),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: <Widget>[
-                                                Text("0" //account['cashDelivered'].toString()
-                                                , style: TextStyle(color: HexColor('#FF9933'), fontSize: 18, fontWeight: FontWeight.bold),),
-                                                SizedBox(width: 4,),
-                                                Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#FF9933'), fontSize: 14, fontWeight: FontWeight.bold),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: 16.0),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(Radius.circular(4.0))
-                                        ),
-                                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  CircleAvatar(
-                                                    backgroundColor: Color.fromRGBO(0, 153, 204, 0.2),
-                                                    child: Image.asset('icons/coin.png'),
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Text(allTranslations.text('farax_is_holding'), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14),),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: <Widget>[
-                                                Text("0"//account['faraxHolding'].toStringAsFixed(2)
-                                                , style: TextStyle(color: HexColor('#0099CC'), fontSize: 18, fontWeight: FontWeight.bold),),
-                                                SizedBox(width: 4,),
-                                                Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14, fontWeight: FontWeight.bold),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: 16.0),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(Radius.circular(4.0))
-                                        ),
-                                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  CircleAvatar(
-                                                    backgroundColor: Color.fromRGBO(255, 153, 51, 0.2),
-                                                    child: Image.asset('icons/income.png'),
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Text("Total completed orders"//allTranslations.text('totol_completed_orders')
-                                                  , style: TextStyle(color: HexColor('#FF9933'), fontSize: 14),),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: <Widget>[
-                                                Text("0" //account['cashDelivered'].toString()
-                                                , style: TextStyle(color: HexColor('#FF9933'), fontSize: 18, fontWeight: FontWeight.bold),),
-                                                SizedBox(width: 4,),
-                                                Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#FF9933'), fontSize: 14, fontWeight: FontWeight.bold),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(height: 16.0),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(Radius.circular(4.0))
-                                        ),
-                                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  CircleAvatar(
-                                                    backgroundColor: Color.fromRGBO(0, 153, 204, 0.2),
-                                                    child: Image.asset('icons/coin.png'),
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Text(allTranslations.text('last_7_days')//allTranslations.text('farax_is_holding')
-                                                  , style: TextStyle(color: HexColor('#0099CC'), fontSize: 14),),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: <Widget>[
-                                                Text("0"//account['faraxHolding'].toStringAsFixed(2)
-                                                , style: TextStyle(color: HexColor('#0099CC'), fontSize: 18, fontWeight: FontWeight.bold),),
-                                                SizedBox(width: 4,),
-                                                Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14, fontWeight: FontWeight.bold),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),//
-                                       SizedBox(height: 16.0),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius: BorderRadius.all(Radius.circular(4.0))
-                                        ),
-                                        padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: <Widget>[
-                                            Container(
-                                              child: Row(
-                                                children: <Widget>[
-                                                  CircleAvatar(
-                                                    backgroundColor: Color.fromRGBO(255, 153, 51, 0.2),
-                                                    child: Image.asset('icons/income.png'),
-                                                  ),
-                                                  SizedBox(width: 10,),
-                                                  Text(allTranslations.text('this_month')
-                                                  , style: TextStyle(color: HexColor('#FF9933'), fontSize: 14),),
-                                                ],
-                                              ),
-                                            ),
-                                            Row(
-                                              crossAxisAlignment: CrossAxisAlignment.end,
-                                              children: <Widget>[
-                                                Text("0" //account['cashDelivered'].toString()
-                                                , style: TextStyle(color: HexColor('#FF9933'), fontSize: 18, fontWeight: FontWeight.bold),),
-                                                SizedBox(width: 4,),
-                                                Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#FF9933'), fontSize: 14, fontWeight: FontWeight.bold),)
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                      ),
+                                      Text(account != null ? account['totalCompleted'].toStringAsFixed(2) : '0'
+                                      , style: TextStyle(color: HexColor('#FF9933'), fontSize: 18, fontWeight: FontWeight.bold),),
+                                      SizedBox(width: 4,),
+                                      Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#FF9933'), fontSize: 14, fontWeight: FontWeight.bold),)
                                     ],
-                                  ))),
-                                //}
-                            //}
-                        //   },
-                        // ),
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        CircleAvatar(
+                                          backgroundColor: Color.fromRGBO(0, 153, 204, 0.2),
+                                          child: Image.asset('icons/coin.png'),
+                                        ),
+                                        SizedBox(width: 10,),
+                                        Text(allTranslations.text('commission_on_bills'), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14),),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(account != null ? account['commission'].toStringAsFixed(2) : '0'
+                                      , style: TextStyle(color: HexColor('#0099CC'), fontSize: 18, fontWeight: FontWeight.bold),),
+                                      SizedBox(width: 4,),
+                                      Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14, fontWeight: FontWeight.bold),)
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        CircleAvatar(
+                                          backgroundColor: Color.fromRGBO(255, 153, 51, 0.2),
+                                          child: Image.asset('icons/income.png'),
+                                        ),
+                                        SizedBox(width: 10,),
+                                        Text(allTranslations.text('this_week')
+                                        , style: TextStyle(color: HexColor('#FF9933'), fontSize: 14),),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(account != null ? account['thisWeek'].toStringAsFixed(2) : '0'
+                                      , style: TextStyle(color: HexColor('#FF9933'), fontSize: 18, fontWeight: FontWeight.bold),),
+                                      SizedBox(width: 4,),
+                                      Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#FF9933'), fontSize: 14, fontWeight: FontWeight.bold),)
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            Container(
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.all(Radius.circular(4.0))
+                              ),
+                              padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: <Widget>[
+                                  Container(
+                                    child: Row(
+                                      children: <Widget>[
+                                        CircleAvatar(
+                                          backgroundColor: Color.fromRGBO(0, 153, 204, 0.2),
+                                          child: Image.asset('icons/coin.png'),
+                                        ),
+                                        SizedBox(width: 10,),
+                                        Text(allTranslations.text('total_salary')
+                                        , style: TextStyle(color: HexColor('#0099CC'), fontSize: 14),),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    crossAxisAlignment: CrossAxisAlignment.end,
+                                    children: <Widget>[
+                                      Text(account != null ? account['salary'].toStringAsFixed(2) : '0'
+                                      , style: TextStyle(color: HexColor('#0099CC'), fontSize: 18, fontWeight: FontWeight.bold),),
+                                      SizedBox(width: 4,),
+                                      Text(allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#0099CC'), fontSize: 14, fontWeight: FontWeight.bold),)
+                                    ],
+                                  )
+                                ],
+                              ),
+                            ),//
+                          ],
+                        ))),
                         InkWell(
                           onTap: () {
                             Navigator.of(context).push(

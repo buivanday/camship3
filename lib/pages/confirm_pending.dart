@@ -1,11 +1,13 @@
 import 'package:farax/components/hex_color.dart';
 import 'package:farax/pages/delivery_customer.dart';
+import 'package:farax/utils/ensure_visible_focus.dart';
 import 'package:flutter/material.dart';
 import '../all_translations.dart';
 import '../components/gradient_appbar.dart';
 import '../utils/network_utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/auth_utils.dart';
+import 'choose_on_map.dart';
 
 class ConfirmPending extends StatefulWidget {
   const ConfirmPending({
@@ -26,7 +28,7 @@ class Zone {
   Zone(this.id, this.name);
 }
 
-class _ConfirmPendingState extends State<ConfirmPending> {
+class _ConfirmPendingState extends State<ConfirmPending>  with SingleTickerProviderStateMixin{
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 	SharedPreferences _sharedPreferences;
@@ -36,21 +38,39 @@ class _ConfirmPendingState extends State<ConfirmPending> {
   String failedReason = '';
   String _newAddress = '';
   bool isChangeZone = false;
+  dynamic _newAddressObj;
   dynamic _selectedZone;
   List<DropdownMenuItem> _zoneItems;
   var _otherReasonController = new TextEditingController();
   var _newAddressController = new TextEditingController();
+  AnimationController _controller;
+  Animation _animation;
+  FocusNode _focusNode = FocusNode();
 
   @override
 	void initState() {
     _getZones();
 		super.initState();
+
+    _controller = AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+    _animation = Tween(begin: 300.0, end: 50.0).animate(_controller)
+    ..addListener(() {
+      setState(() {});
+    });
+
+    _focusNode.addListener(() {
+      if (_focusNode.hasFocus) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    });
 	}
 
   _handleChangeFailedReason(value) {
     if(value == allTranslations.text('other')) {
       setState(() {
-        failedReason = _otherReasonController.text;
+        failedReason = value;
         isOtherReason = true;
         isChangeZone = false;
       });
@@ -80,10 +100,10 @@ class _ConfirmPendingState extends State<ConfirmPending> {
     _sharedPreferences = await _prefs;
 		String authToken = AuthUtils.getToken(_sharedPreferences);
     var responseJson = await NetworkUtils.postWithBody(authToken, '/api/Orders/${widget.order['id']}/pending', !isChangeZone ? {
-      'pendingReason': failedReason
+      'pendingReason': failedReason == allTranslations.text('other') ? _otherReasonController.text : failedReason
     } : {
-      'pendingReason': failedReason,
-      'newAddress': _newAddress,
+      'pendingReason': failedReason == allTranslations.text('other') ? _otherReasonController.text : failedReason,
+      'newAddress': _newAddressObj,
       'newZone': _selectedZone
     });
     if(responseJson == null) {
@@ -103,18 +123,18 @@ class _ConfirmPendingState extends State<ConfirmPending> {
     dynamic zones = await NetworkUtils.fetchWithoutAuthorization('/api/Zones');
     for(var i = 0; i < zones.length; i++) {
       _items.add(new DropdownMenuItem(
-        value: zones[i],
+        value: zones[i]['id'],
         child: Text(zones[i]['name'].toString())
       ));
     }
     if(mounted) {
       setState(() {
         _zoneItems = _items;
-        _selectedZone = zones[0];
+        _selectedZone = zones[0]['id'];
       });
     } else {
       _zoneItems = _items;
-      _selectedZone = zones[0];
+      _selectedZone = zones[0]['id'];
     }
   }
   
@@ -122,8 +142,6 @@ class _ConfirmPendingState extends State<ConfirmPending> {
   Widget build(BuildContext context) {
     return Scaffold(
         key: _scaffoldKey,
-        resizeToAvoidBottomPadding: true,
-        resizeToAvoidBottomInset: false,
         body: Column(
           children: <Widget>[
             GradientAppBar(title: widget.order['shop']['fullName'],hasBackIcon: true),
@@ -131,7 +149,8 @@ class _ConfirmPendingState extends State<ConfirmPending> {
               flex: 1,
               child: Container(
                 padding: EdgeInsets.only(top: 24, left: 16, right: 16),
-                child: Column(
+                child: SingleChildScrollView(
+                  child: Column(
                   children: <Widget>[
                     Text(allTranslations.text('why_does_it_pending'), style: TextStyle(color: HexColor('#FF9933'), fontWeight: FontWeight.bold, fontSize: 18.0),),
                     SizedBox(height: 36,),
@@ -255,11 +274,6 @@ class _ConfirmPendingState extends State<ConfirmPending> {
                           padding: const EdgeInsets.symmetric(horizontal: 16),
                           child: TextField(
                             controller: _otherReasonController,
-                            onChanged: (String value) {
-                              setState(() {
-                                failedReason = value;
-                              });
-                            },
                             decoration: InputDecoration(
                               hintText: allTranslations.text('enter_other_reason_label')
                             ),
@@ -272,52 +286,69 @@ class _ConfirmPendingState extends State<ConfirmPending> {
                         opacity: 0.0,
                       ),
                     ),
-                    isChangeZone == true ? Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          padding: const EdgeInsets.only(left: 16, top: 12),
-                          alignment: Alignment.centerLeft,
-                          child: Text(allTranslations.text('select_new_zone'), style: TextStyle(color: HexColor('#B0BEC5'), fontSize: 12),),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: DropdownButton(
-                            items: _zoneItems,
-                            value: _selectedZone,
-                            onChanged: onChangeDropdownItem,
-                          )
-                        ),
-                        Container(
-                          padding: const EdgeInsets.only(left: 16, top: 12),
-                          alignment: Alignment.centerLeft,
-                          child: Text(allTranslations.text('enter_new_address'), style: TextStyle(color: HexColor('#B0BEC5'), fontSize: 12),),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: TextField(
-                            controller: _newAddressController,
-                            onChanged: (String value) {
-                              setState(() {
-                                _newAddress = value;
-                              });
-                            },
-                            decoration: InputDecoration(
-                              hintText: allTranslations.text('enter_new_address')
-                            ),
-                          ),
-                        )
-                      ],
-                    ) : IgnorePointer(
-                      ignoring: true,
-                      child: Opacity(opacity: 0.0,),
-                    )
                   ],
                 ),
+                )
               )
             ),
-            Padding(
+            Column(
+              children: <Widget>[
+                isChangeZone == true ? Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    padding: const EdgeInsets.only(left: 16, top: 12),
+                    alignment: Alignment.centerLeft,
+                    child: Text(allTranslations.text('select_new_zone'), style: TextStyle(color: HexColor('#B0BEC5'), fontSize: 12),),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: DropdownButton(
+                      items: _zoneItems,
+                      value: _selectedZone,
+                      onChanged: onChangeDropdownItem,
+                    )
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 16, top: 12),
+                    alignment: Alignment.centerLeft,
+                    child: Text(allTranslations.text('enter_new_address'), style: TextStyle(color: HexColor('#B0BEC5'), fontSize: 12),),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 16.0, right: 16.0),
+                    child: EnsureVisibleWhenFocused(
+                      focusNode: _focusNode,
+                      child: TextField(
+                        controller: _newAddressController,
+                        onTap: () async {
+                          var result = await Navigator.of(context)
+                            .push(new PageRouteBuilder(
+                              pageBuilder: (BuildContext context, _, __) {
+                                return ChooseOnMap(isConfirmPending: true);
+                              },
+                            ));
+                          _newAddressController.text = result['chosenAddress'];
+                          print(result['selectedZone']);
+                          setState(() {
+                            _newAddressObj = result;
+                            _selectedZone = result['selectedZone']['id'];
+                            _newAddress = result['chosenAddress'];
+                          });
+                        },
+                        focusNode: _focusNode,
+                        decoration: InputDecoration(
+                          hintText: allTranslations.text('enter_new_address')
+                        ),
+                      ),
+                    )
+                  )
+                ],
+              ) : IgnorePointer(
+                ignoring: true,
+                child: Opacity(opacity: 0.0,),
+              ),
+                    Padding(
               padding: const EdgeInsets.all(16),
               child: RaisedButton(
                 onPressed: (failedReason == '' || (isChangeZone && _newAddress == ''))? null : () {
@@ -335,6 +366,8 @@ class _ConfirmPendingState extends State<ConfirmPending> {
                   ),
                 ),
               ),
+            )
+              ],
             )
           ],
         )

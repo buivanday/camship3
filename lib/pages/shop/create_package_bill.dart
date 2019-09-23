@@ -288,19 +288,19 @@ class _CreatePackageBillState extends State<CreatePackageBill> {
                                 ),
                                 SizedBox(height: 20.0,),
                                 Image.asset('icons/Line-bill.png', fit: BoxFit.contain, width: double.infinity),
-                                SizedBox(height: 20.0,),
-                                Row(
-                                  children: <Widget>[
-                                    Expanded(
-                                      flex: 3,
-                                      child: Text(allTranslations.text('total_shipping_price'), style: TextStyle(color: HexColor('#78909C'), fontSize: 14),),
-                                    ),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Text((widget.packageInformation['isShopPaid'] == 'false' ? '0' : widget.totalShippingPrice.toString()) + ' ' + allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#455A64'), fontWeight: FontWeight.bold), textAlign: TextAlign.right,),
-                                    )
-                                  ],
-                                ),
+                                // SizedBox(height: 20.0,),
+                                // Row(
+                                //   children: <Widget>[
+                                //     Expanded(
+                                //       flex: 3,
+                                //       child: Text(allTranslations.text('total_shipping_price'), style: TextStyle(color: HexColor('#78909C'), fontSize: 14),),
+                                //     ),
+                                //     Expanded(
+                                //       flex: 1,
+                                //       child: Text((widget.packageInformation['isShopPaid'] == 'false' ? '0' : widget.totalShippingPrice.toStringAsFixed(2)) + ' ' + allTranslations.text('usd').toUpperCase(), style: TextStyle(color: HexColor('#455A64'), fontWeight: FontWeight.bold), textAlign: TextAlign.right,),
+                                //     )
+                                //   ],
+                                // ),
                                 SizedBox(height: 20.0,),
                                 Row(
                                   children: <Widget>[

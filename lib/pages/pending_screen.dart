@@ -58,7 +58,7 @@ class _PendingScreenState extends State<PendingScreen> {
                       itemBuilder: (context, position) {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 30, right: 5),
-                          child: OrderItem(order: _orders[position], isGoToDeliveringPage: false,),
+                          child: OrderItem(order: _orders[position], isGoToDeliveringPage: _orders[position]['currentStatusValue'] == 15 && _orders[position]['lastStatusValue'] == 11,),
                         );
                       }
                     ) : Center(

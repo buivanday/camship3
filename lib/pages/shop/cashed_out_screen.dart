@@ -7,8 +7,6 @@ import 'package:farax/pages/shop/create_package.dart';
 import 'package:farax/utils/auth_utils.dart';
 import 'package:farax/utils/network_utils.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../all_translations.dart';
 import 'package:provider/provider.dart';
@@ -214,7 +212,7 @@ class _CashedOutBillsState extends State<CashedOutBills> {
       ),
       Expanded(
         flex: 1,
-        child: SearchResultWidget(items: _orders,),
+        child: SearchResultWidget(items: _orders, fromCashedOut: true),
       )
     ],);
   }

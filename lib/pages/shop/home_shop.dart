@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:farax/blocs/search_bloc.dart';
 import 'package:farax/blocs/search_state.dart';
 import 'package:farax/blocs/shop_api.dart';
@@ -5,6 +7,7 @@ import 'package:farax/components/fab_bar.dart';
 import 'package:farax/components/hex_color.dart';
 import 'package:farax/components/search_loading_widget.dart';
 import 'package:farax/pages/shop/profile_shop.dart';
+import 'package:farax/utils/auth_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,6 +39,7 @@ class _HomeShopState extends State<HomeShop> {
   GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   var _searchOrderController = new TextEditingController();
   SearchBloc _searchBloc;
+  SearchResult _onRefreshResult;
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
   SharedPreferences _sharedPreferences;
   bool isOffline;
@@ -121,6 +125,15 @@ class _HomeShopState extends State<HomeShop> {
     super.dispose();
   }
 
+  Future<SearchResult> _handleRefresh() async {
+    // final result = await _fetchResults('all');
+    final result = await widget.api.search('all');
+    setState(() {
+      _onRefreshResult = result;
+    });
+    return result;
+  }
+
   @override
   Widget build(BuildContext context) {
     var network = Provider.of<ConnectionStatus>(context);
@@ -150,6 +163,7 @@ class _HomeShopState extends State<HomeShop> {
                       initialData: SearchAll(),
                       builder: (BuildContext context, AsyncSnapshot<SearchState> snapshot) {
                         final state = snapshot.data;
+                        print(state);
                         if(state is SearchAll) {
                           _searchBloc.onTextChanged.add('all');
                         }
@@ -182,8 +196,11 @@ class _HomeShopState extends State<HomeShop> {
                                 children: <Widget>[
                                   LoadingWidget(visible: state is SearchLoading),
                                   EmptyWidget(visible: state is SearchEmpty),
-                                  SearchResultWidget(
-                                    items: state is SearchPopulated ? state.result.items : [],
+                                  RefreshIndicator(
+                                    onRefresh: _handleRefresh,
+                                    child: SearchResultWidget(
+                                      items: state is SearchPopulated ? _onRefreshResult != null && _onRefreshResult.items.length > 0 ? _onRefreshResult.items : state.result.items : [],
+                                    ),
                                   ),
                                   // SearchErrorWidget(visible: state is SearchError),
                                 ],
@@ -264,8 +281,9 @@ class EmptyWidget extends StatelessWidget {
 class SearchResultWidget extends StatelessWidget {
   final bool visible;
   final List<ShopOrder> items;
+  final bool fromCashedOut = false;
 
-  SearchResultWidget({Key key, @required this.items, bool visible}) 
+  SearchResultWidget({Key key, @required this.items, bool visible, bool fromCashedOut}) 
       : this.visible = visible ?? items.isNotEmpty,
         super(key: key);
 
@@ -277,7 +295,7 @@ class SearchResultWidget extends StatelessWidget {
       child: ListView.separated(
         itemCount: items.length,
         itemBuilder: (context, index) {
-          return new ShopOrderWidget(order: items[index]);
+          return new ShopOrderWidget(order: items[index], fromCashedOut: true);
         },
         separatorBuilder: (context, index) {
           return SizedBox(height: 16,);
@@ -291,8 +309,10 @@ class ShopOrderWidget extends StatefulWidget {
   const ShopOrderWidget({
     Key key,
     this.order,
+    this.fromCashedOut = false,
   }) : super(key: key);
   final ShopOrder order;
+  final bool fromCashedOut;
 
   @override
   _ShopOrderWidgetState createState() => _ShopOrderWidgetState();
@@ -397,7 +417,7 @@ class _ShopOrderWidgetState extends State<ShopOrderWidget> {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            widget.order.isCashedOut ? Text('Cashed Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) : Container(),
+            widget.order.isCashedOut ? Text(allTranslations.text('cashed_out'), style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) : Container(),
             SizedBox(height: 2,),
             Text(_getStatusName(), style: TextStyle(color: HexColor('#4CAF50'), fontSize: 12.0),)
           ],
@@ -502,19 +522,21 @@ class _ShopOrderWidgetState extends State<ShopOrderWidget> {
       dynamic totalCOD = order.totalCOD ?? 0;
       if(extraService == 'cod') {
         if(isShopPaid) {
-          total += shippingCost + valueOfOrder + totalCOD;
+          total = (valueOfOrder - (shippingCost + totalCOD)).toDouble();
         } else {
-          total += totalCOD;
+          total = (valueOfOrder - totalCOD).toDouble();
         }
       } else {
-        total += shippingCost;
+        if(isShopPaid) {
+          total -= shippingCost;
+        }
       }
     }
     
     return order == null ? Center(child:CircularProgressIndicator()) : InkWell(
       onTap: () async {
         Navigator.push(context, MaterialPageRoute(
-          builder: (context) => CreatePackageDetail(order: order,)
+          builder: (context) => CreatePackageDetail(order: order,fromCashedOut: widget.fromCashedOut)
         ));
       },
       child: Container(

@@ -191,7 +191,7 @@ class _BillingHistoryWidgetState extends State<BillingHistoryWidget> {
     int _position = widget.position;
     if(widget.position == 7) {
       _position = 0;
-    } 
+    }
     return widget.items.isNotEmpty && widget.items[_position].orders.isNotEmpty ? SingleChildScrollView(
       scrollDirection: Axis.vertical,
       child: Column(
@@ -211,6 +211,8 @@ class _BillingHistoryWidgetState extends State<BillingHistoryWidget> {
                 new BillingHistoryReportGeneralItem(title: 'order_completed', value: widget.items[_position].totalCompleted, hasUSD: false),
                 SizedBox(height: 10.0,),
                 new BillingHistoryReportGeneralItem(title: 'order_failed', value: widget.items[_position].totalFailed, hasUSD: false),
+                SizedBox(height: 10.0,),
+                new BillingHistoryReportGeneralItem(title: 'order_pending', value: widget.items[_position].totalPending, hasUSD: false),
                 SizedBox(height: 10.0,),
                 new BillingHistoryReportGeneralItem(title: 'total_cod', value: widget.items[_position].totalCOD,),
                 SizedBox(height: 10.0,),
@@ -376,7 +378,7 @@ class _BillingHistoryOrderState extends State<BillingHistoryOrder> {
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      widget.order.isCashedOut ? Text('Cashed Out', style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) : Container(),
+                      widget.order.isCashedOut ? Text(allTranslations.text('cashed_out'), style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),) : Container(),
                       SizedBox(height: 2,),
                       Text(_getStatusName(), style: TextStyle(color: HexColor('#4CAF50'), fontSize: 12.0),)
                     ],
@@ -448,7 +450,7 @@ class BillingHistoryReportGeneralItem extends StatelessWidget {
         ),
         Expanded(
           flex: 3,
-          child: Text(total.toString() + ' ' + (hasUSD ? allTranslations.text('usd').toUpperCase() : ''), style: TextStyle(color: HexColor('#455A64'), fontSize: 14.0),),
+          child: Text(total.toStringAsFixed(2) + ' ' + (hasUSD ? allTranslations.text('usd').toUpperCase() : ''), style: TextStyle(color: HexColor('#455A64'), fontSize: 14.0),),
         )
       ],
     );

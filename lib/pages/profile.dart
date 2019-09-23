@@ -126,8 +126,12 @@ class _ProfileState extends State<Profile> {
                       return Text('error');
                     } else {
                       String _avatar = snapshot.data['avatar'];
-                      Image avatar = _avatar != null && _avatar != '' ? Image.network('https://camships.com:3000/api/attachments/camship/download/${_avatar}?v=' + new DateTime.now().millisecondsSinceEpoch.toString(),fit: BoxFit.contain) : Image.asset('icons/logo.png', fit: BoxFit.contain);
-                      return Container(
+                      Image avatar = _avatar != null && _avatar != '' ? Image.network('https://camships.com:3000/api/attachments/compressed/download/${_avatar}?v=' + new DateTime.now().millisecondsSinceEpoch.toString(),fit: BoxFit.contain) : Image.asset('icons/logo.png', fit: BoxFit.contain);
+                      return InkWell(
+                        onTap: () {
+                          Navigator.pushNamed(context, '/profile-detail');
+                        },
+                        child: Container(
                         padding: const EdgeInsets.all(16),
                         child: Column(
                           children: <Widget>[
@@ -180,6 +184,7 @@ class _ProfileState extends State<Profile> {
 
                           ],
                         ),
+                      ),
                       );
                     }
                 }

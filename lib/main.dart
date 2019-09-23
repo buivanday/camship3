@@ -30,10 +30,7 @@ import 'dart:async';
 import "package:firebase_messaging/firebase_messaging.dart";
 import 'package:provider/provider.dart';
 import 'services/connectivity.dart';
-import 'package:web_socket_channel/io.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
-
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:web_socket_channel/io.dart';
 
 void main() {
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp,DeviceOrientation.portraitDown])
@@ -95,12 +92,12 @@ class _MyAppState extends State<MyApp> {
         print('on launch $message');
       },
     );
-    var channel = IOWebSocketChannel.connect("wss://camships.com:3000");
+    // var channel = IOWebSocketChannel.connect("wss://camships.com:3000");
 
-    channel.stream.listen((message) {
-      // channel.sink.add("received!");
-      print(message);
-    });
+    // channel.stream.listen((message) {
+    //   // channel.sink.add("received!");
+    //   print(message);
+    // });
   }
 
   void iOS_Permission() {

@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:farax/blocs/shop_api.dart';
 import 'package:farax/components/gradient_appbar.dart';
 import 'package:farax/components/hex_color.dart';
@@ -21,14 +22,15 @@ class CreatePackageDetail extends StatefulWidget {
     this.hasNavbar = true,
     this.order,
     this.isCreatePackage = false,
-    this.isFromShipperHistory = false
+    this.isFromShipperHistory = false,
+    this.fromCashedOut = false
   }) : super(key: key);
 
   final bool hasNavbar;
   final bool isCreatePackage;
   final ShopOrder order;
   final isFromShipperHistory;
-
+  final bool fromCashedOut;
   @override
   _CreatePackageDetailState createState() => _CreatePackageDetailState();
 }
@@ -527,13 +529,15 @@ bool _isValidate(String variable) {
       dynamic totalCOD = widget.order.totalCOD ?? 0;
       if(extraService == 'cod') {
         if(isShopPaid) {
-          total += shippingCost + valueOfOrder + totalCOD;
+          total = (valueOfOrder - (shippingCost + totalCOD)).toDouble();
         } else {
-          total += totalCOD;
+          total = (valueOfOrder - totalCOD + (widget.isFromShipperHistory ? shippingCost : 0)).toDouble();
         }
       } else {
         if(isShopPaid) {
-          total += shippingCost;
+          total -= shippingCost;
+        } else {
+          total += (widget.isFromShipperHistory ? shippingCost : 0);
         }
       }
     }
@@ -553,7 +557,7 @@ bool _isValidate(String variable) {
               children: <Widget>[
                 Column(
                   children: <Widget>[
-                  widget.hasNavbar ? GradientAppBar(title: allTranslations.text('detail'), hasBackIcon: true, backtoShopHome: !widget.isFromShipperHistory,) : Container(),
+                  widget.hasNavbar ? GradientAppBar(title: allTranslations.text('detail'), hasBackIcon: true, backtoShopHome: !widget.fromCashedOut && !widget.isFromShipperHistory,) : Container(),
                     Expanded(
                       flex: 1,
                       child: SingleChildScrollView(
@@ -738,7 +742,39 @@ bool _isValidate(String variable) {
                                         ),
                                         
                                       ],
-                                    ) : Container()
+                                    ) : Container(),
+                                    widget.order.returnedReason != null && widget.order.returnedReason != '' ? SizedBox(height: 10.0,) : Container(),
+                                    widget.order.returnedReason != null && widget.order.returnedReason != '' ?  Row(
+                                      children: <Widget>[
+                                        Expanded(
+                                          flex: 1,
+                                          child: Text(allTranslations.text('returned_reason') + ':', style: TextStyle(color: HexColor('#B0BEC5'), fontSize: 14.0),),
+                                        ),
+                                        Expanded(
+                                          flex: 3,
+                                          child: InkWell(
+                                            onTap: widget.isFromShipperHistory ? null : () {
+                                              Navigator.push(context, MaterialPageRoute(
+                                                builder: (context) => DeliveryStatus(order: widget.order)
+                                              ));
+                                            }, 
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: <Widget>[
+                                                Expanded(
+                                                  flex: 1,
+                                                  child: RichText(
+                                                    text: TextSpan(text: widget.order.returnedReason, style: TextStyle(color: HexColor('#0099CC'), fontSize: 14.0),),
+                                                    softWrap: true,
+                                                  ),
+                                                ),
+                                              ],
+                                            )
+                                          )
+                                        ),
+                                        
+                                      ],
+                                    ) : Container(),
                                   ],
                                 ) : Container()
                               ) : Container(),
@@ -1228,7 +1264,6 @@ bool _isValidate(String variable) {
                                                             controller: lengthController,
                                                             textInputAction: TextInputAction.next,
                                                             focusNode: _lengthFocusNode,
-                                                            autofocus: true,
                                                             onFieldSubmitted: (value) {
                                                               widthController.text = '';
                                                               _fieldFocusChange(context, _lengthFocusNode, _widthFocusNode);
@@ -1371,7 +1406,7 @@ bool _isValidate(String variable) {
                                                         onChanged: _handleChangePackageType,
                                                         activeColor: HexColor('#0099CC'),
                                                       ),
-                                                      Text(_packageType.name, style: TextStyle(color: HexColor('#455A64')),)
+                                                      Text(allTranslations.text(_packageType.name), style: TextStyle(color: HexColor('#455A64')),)
                                                     ],
                                                   )
                                                 ));
@@ -1578,11 +1613,14 @@ bool _isValidate(String variable) {
           ),
         )
       ),
-      onWillPop: ()async {
+      onWillPop: () async {
+        print(widget.isCreatePackage);
         //widget.isFromShipperHistory ? Navigator.pop(context) : Navigator.pushReplacementNamed(context, '/main-shop');
-        if(!widget.isFromShipperHistory)
+        if(!widget.isFromShipperHistory || widget.isCreatePackage) {
           Navigator.pushReplacementNamed(context, '/main-shop');
-        return true;
+        } else {
+          return true;
+        }
       },
     );
   }
@@ -1628,7 +1666,11 @@ class ShipperInformation extends StatelessWidget {
                 flex: 1,
                 child: ClipRRect(
                   borderRadius: BorderRadius.all(Radius.circular(5)),
-                  child: Image.asset('icons/avatar.jpg', fit: BoxFit.cover)
+                  child:CachedNetworkImage(
+                      imageUrl: shipper['avatar'] != null && shipper['avatar'] != '' ? "https://camships.com:3000/api/attachments/compressed/download/${shipper['avatar']}" : "https://camships.com:3000/api/attachments/compressed/download/logo.png",
+                      placeholder: (context, url) => new Center(child: CircularProgressIndicator(),),
+                      errorWidget: (context, url, error) => new Icon(Icons.error),
+                  ),
                 ),
               ),
               SizedBox(width: 20.0,),

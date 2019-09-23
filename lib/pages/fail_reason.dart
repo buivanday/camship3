@@ -30,7 +30,7 @@ class _FailReasonState extends State<FailReason> {
   _handleChangeFailedReason(value) {
     if(value == allTranslations.text('other')) {
       setState(() {
-        failedReason = _failedReasonController.text;
+        failedReason = value;
         isOtherReason = true;
       });
     } else {
@@ -46,7 +46,7 @@ class _FailReasonState extends State<FailReason> {
     _sharedPreferences = await _prefs;
 		String authToken = AuthUtils.getToken(_sharedPreferences);
     var responseJson = await NetworkUtils.postWithBody(authToken, '/api/Orders/${widget.order['id']}/shipping-failed', {
-      "failedReasonFull": failedReason
+      "failedReasonFull": failedReason == allTranslations.text('other') ? _failedReasonController.text : failedReason
     });
     if(responseJson == null) {
 
@@ -207,12 +207,7 @@ class _FailReasonState extends State<FailReason> {
                               padding: const EdgeInsets.symmetric(horizontal: 16),
                               child: TextField(
                                 controller: _failedReasonController,
-                                onChanged: (String value) {
-                                  setState(() {
-                                    failedReason = value;
-                                  });
-                                },
-                              decoration: InputDecoration(
+                                decoration: InputDecoration(
                                 hintText: allTranslations.text('enter_other_reason_label')
                               ),
                             ),

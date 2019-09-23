@@ -60,15 +60,16 @@ class _ReceiptState extends State<Receipt> {
     int deliveryTime = widget.order['delivery']['time'];
     String extraService = widget.order['orderPackages']['extraService'];
     bool isShopPaid = widget.order['orderPackages']['isShopPaid'];
+    print(isShopPaid);
     double totalCOD = 0;
     double total = 0;
     double valueOfOrder = 0;
     if(extraService == 'cod') {
       totalCOD = widget.order['totalCOD'].toDouble();
       valueOfOrder = widget.order['valueOfOrder'].toDouble();
-      total += !isShopPaid ? (widget.order['shippingCost'].toDouble() + totalCOD + valueOfOrder) : 0;
+      total += (valueOfOrder + (isShopPaid ? 0 : widget.order['shippingCost'].toDouble()));
     } else {
-      total += !isShopPaid ? widget.order['shippingCost'].toDouble() : 0;
+      total += isShopPaid ? 0 : widget.order['shippingCost'].toDouble();
     }
 
     return Scaffold(
@@ -88,7 +89,7 @@ class _ReceiptState extends State<Receipt> {
                       ClipPath(
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          height: MediaQuery.of(context).size.height * 0.52,
+                          height: MediaQuery.of(context).size.height * 0.7,
                           color: Colors.white,
                           child: Column(
                             children: <Widget>[
@@ -118,8 +119,18 @@ class _ReceiptState extends State<Receipt> {
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: <Widget>[
-                                              Text(allTranslations.text('shipping_fee')),
-                                              Text((!isShopPaid ? widget.order['shippingCost'].toStringAsFixed(2) : '0') + ' ' + allTranslations.text('usd').toUpperCase())
+                                              Text(allTranslations.text('shipping_fee').toUpperCase()),
+                                              Text(widget.order['shippingCost'].toStringAsFixed(2) + ' ' + allTranslations.text('usd').toUpperCase())
+                                            ],
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(16),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                            children: <Widget>[
+                                              Text(allTranslations.text('order_type').toUpperCase()),
+                                              Text(allTranslations.text(extraService).toUpperCase())
                                             ],
                                           ),
                                         ),

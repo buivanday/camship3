@@ -64,7 +64,7 @@ class _DeliveryCustomerState extends State<DeliveryCustomer> {
         newOrder['lastStatusValue'] = responseJson['lastStatusValue'];
         Navigator.pop(_scaffoldKey.currentContext);
         Navigator.push(_scaffoldKey.currentContext, MaterialPageRoute(
-          builder: (context) => new DeliveryCustomer(order: newOrder)
+          builder: (context) => new DeliveryCustomer(order: newOrder, isReturned: widget.isReturned,)
         ));
       }
     } else {

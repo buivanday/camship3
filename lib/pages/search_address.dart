@@ -42,6 +42,11 @@ class _GetStartedState extends State<SearchAddress> {
           isLoading =false;
            isChoose= false;
         });
+      } else {
+        setState(() {
+          isLoading =false;
+           isChoose= false;
+        });
       }
     }
   }

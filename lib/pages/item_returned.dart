@@ -20,19 +20,20 @@ class ItemReturned extends StatefulWidget {
   _ItemReturnedState createState() => _ItemReturnedState();
 }
 
-class _ItemReturnedState extends State<ItemReturned> {
+class _ItemReturnedState extends State<ItemReturned>{
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
 	SharedPreferences _sharedPreferences;
   bool _hadChange = false;
+  List<dynamic> _items = new List<dynamic>();
   String reason = '';
-
+  TextEditingController _reasonController = new TextEditingController();
   Future _confirmInShop() async {
     _sharedPreferences = await _prefs;
 		String authToken = AuthUtils.getToken(_sharedPreferences);
     var responseJson = await NetworkUtils.postWithBody(authToken, '/api/Orders/${widget.order['id']}/completed', {
-      'items': widget.order['orderPackages']['items'],
-      'reason': reason
+      'items': _items,
+      'reason': _reasonController.text
     });
 
     Navigator.of(context).pop();
@@ -44,15 +45,18 @@ class _ItemReturnedState extends State<ItemReturned> {
   _haveChanged(bool change, int index, int amount) {
     setState(() {
       widget.order['orderPackages']['items'][index]['haveChanged'] = change;
+      widget.order['orderPackages']['items'][index]['returnAmount'] = amount;
     });
     bool haveChanged = false;
     for(var i = 0; i < widget.order['orderPackages']['items'].length; i ++) {
+      print(widget.order['orderPackages']['items'][i]);
       if(widget.order['orderPackages']['items'][i]['returnAmount'] > 0) {
         haveChanged = true;
       }
     }
     setState(() {
       _hadChange = haveChanged;
+      _items = widget.order['orderPackages']['items'];
     });
   }
 
@@ -90,7 +94,7 @@ class _ItemReturnedState extends State<ItemReturned> {
                         child: Text(allTranslations.text('please_select_items_were_returned'), style: TextStyle(color: HexColor('#455A64'), fontWeight: FontWeight.bold),),
                       ),
                       Expanded(
-                        flex: _hadChange == true ? 6 : 1,
+                        flex: _hadChange == true ? 5 : 1,
                         child: ListView(
                           children: list,
                         ),
@@ -111,9 +115,7 @@ class _ItemReturnedState extends State<ItemReturned> {
                                     color: HexColor('#90A4AE')
                                   )
                                 ),
-                                onChanged: (text) {
-                                  reason = text;
-                                },
+                                controller: _reasonController,
                               )
                             ],
                           ),
@@ -172,43 +174,58 @@ class OrderItemReturned extends StatefulWidget {
 class _OrderItemReturnedState extends State<OrderItemReturned> {
   bool isClickMinus = false;
   bool isClickAdd = false;
-  // int amount = 0;
+  int _returnAmount = 0;
 
   @override
   void initState() {
     super.initState();
-    // amount = widget.item['amount'];
+    _returnAmount = widget.item['returnAmount'];
   }
+
+  @override
+  void dispose() {
+    _returnAmount = 0;
+    super.dispose();
+  }
+
   void add() {
     setState(() {
-      if(widget.item['returnAmount'] >= 0 && widget.item['returnAmount'] < widget.max) {
-        widget.item['returnAmount']++;
+      if(_returnAmount >= 0 && _returnAmount < widget.max) {
+        _returnAmount++;
         isClickAdd = true;
         isClickMinus = false;
-        if(widget.item['returnAmount'] == 0) {
+        widget.item['returnAmount'] = _returnAmount;
+        if(_returnAmount == 0) {
           isClickMinus = false;
           isClickAdd = false;
-          widget.haveChanged(false, widget.item['index'], widget.item['returnAmount']);
+          widget.haveChanged(false, widget.item['index'], _returnAmount);
         } else {
-          widget.haveChanged(true, widget.item['index'], widget.item['returnAmount']);
+          widget.haveChanged(true, widget.item['index'], _returnAmount);
         }
+      } else {
+        widget.item['returnAmount'] = _returnAmount;
+        widget.haveChanged(false, widget.item['index'], _returnAmount);
       }
     });
   }
 
   void minus() {
     setState(() {
-      if (widget.item['returnAmount'] > 0 && widget.item['returnAmount'] <= widget.max) {
-        widget.item['returnAmount']--;
+      if (_returnAmount > 0 && _returnAmount <= widget.max) {
+        _returnAmount--;
         isClickAdd = false;
         isClickMinus = true;
-        if(widget.item['returnAmount'] == 0) {
+        widget.item['returnAmount'] = _returnAmount;
+        if(_returnAmount == 0) {
           isClickMinus = false;
           isClickAdd = false;
-          widget.haveChanged(false, widget.item['index'], widget.item['returnAmount']);
+          widget.haveChanged(false, widget.item['index'], _returnAmount);
         } else {
-          widget.haveChanged(true, widget.item['index'], widget.item['returnAmount']);
+          widget.haveChanged(true, widget.item['index'], _returnAmount);
         }
+      } else {
+        widget.item['returnAmount'] = _returnAmount;
+        widget.haveChanged(false, widget.item['index'], _returnAmount);
       }
 
       
@@ -216,7 +233,6 @@ class _OrderItemReturnedState extends State<OrderItemReturned> {
   }
   @override
   Widget build(BuildContext context) {
-    
     return Container(
       color: widget.item['index'] % 2 == 0 ? Color.fromRGBO(248, 248, 248, 1) : Colors.white,
       child: Padding(
@@ -251,7 +267,7 @@ class _OrderItemReturnedState extends State<OrderItemReturned> {
                     icon: Icon(Icons.remove, size: 16, color: HexColor(isClickMinus ? '#0099CC' : '#B0BEC5'),),
                     onPressed: minus,
                   ),
-                  Text(widget.item['returnAmount'].toString(), style: TextStyle(color: HexColor(isClickAdd || isClickMinus ? '#FF3333' : '#455A64'), fontWeight: FontWeight.bold),),
+                  Text(_returnAmount.toString(), style: TextStyle(color: HexColor(isClickAdd || isClickMinus ? '#FF3333' : '#455A64'), fontWeight: FontWeight.bold),),
                   IconButton(
                     padding: const EdgeInsets.all(1.0),
                     icon: Icon(Icons.add, size: 16, color: HexColor(isClickAdd ? '#0099CC' : '#B0BEC5')),

@@ -22,7 +22,7 @@ class ShopApi {
 
   /// Search Github for repositories using the given term
   Future<SearchResult> search(String term) async {
-    if (cache.containsKey(term)) {
+    if (cache.containsKey(term) && term != 'all') {
       return cache[term];
     } else {
       final result = await _fetchResults(term);
@@ -93,8 +93,9 @@ class ShopOrder {
   final String pendingReason;
   final String failedReasonFull;
   final String failedReason;
+  final String returnedReason;
   
-  ShopOrder({this.noOfOrder, this.orderId, this.lastStatusValue, this.currentStatusValue, this.statusId, this.id, this.timeReceived,this.failedReason,
+  ShopOrder({this.noOfOrder, this.orderId, this.lastStatusValue, this.currentStatusValue, this.statusId, this.id, this.timeReceived,this.failedReason, this.returnedReason,
    this.isCountdown, this.timeShopBook, this.receiver, this.shop, this.orderPackages, this.shipper, this.isCashedOut, this.pendingReason, this.failedReasonFull,
    this.delivery, this.total, this.shippingCost, this.totalCOD, this.valueOfOrder, this.createdOn, this.updatedOn, this.zone, this.shipperId, this.shopNotes});
   
@@ -127,7 +128,8 @@ class ShopOrder {
       isCashedOut: json['isCashedOut'],
       pendingReason: json['pendingReason'],
       failedReason: json['failedReason'],
-      failedReasonFull: json['failedReasonFull']
+      failedReasonFull: json['failedReasonFull'],
+      returnedReason: json['returnedReason']
     );
   }
 }
