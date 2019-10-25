@@ -39,7 +39,7 @@ class CreatePackageBill extends StatefulWidget {
   final double totalCOD;
   final double valueOfOrder;
   final String shopNotes;
-  
+
   @override
   _CreatePackageBillState createState() => _CreatePackageBillState();
 }
@@ -68,7 +68,7 @@ class _CreatePackageBillState extends State<CreatePackageBill> {
 
   _fetchSessionAndNavigate() async {
 		_sharedPreferences = await _prefs;
-    
+
     await _sharedPreferences.setBool("isBillExist", true);
 		String authToken = AuthUtils.getToken(_sharedPreferences);
 
@@ -78,7 +78,7 @@ class _CreatePackageBillState extends State<CreatePackageBill> {
 	}
 
   _addItem() {
-    
+
     setState(() {
       codItems.add(new CodItem(index: codItems.length + 1,));
     });
@@ -100,7 +100,7 @@ class _CreatePackageBillState extends State<CreatePackageBill> {
     setState(() {
       _showWaiting = true;
     });
-   
+
     _sharedPreferences = await _prefs;
 		String authToken = AuthUtils.getToken(_sharedPreferences);
     int deliveryTime = int.parse(widget.deliveryTime.replaceAll('h', ''));
@@ -124,23 +124,23 @@ class _CreatePackageBillState extends State<CreatePackageBill> {
       'valueOfOrder': widget.packageInformation['total'],
       'shopNotes': widget.shopNotes
     });
-    
+
     if(createOrderResponse != null && createOrderResponse['orderId'] != '') {
       ShopOrder createdOrder = ShopOrder.fromJson(createOrderResponse);
       await showDialog<String>(
         context: context,
         barrierDismissible: false,
         builder: (BuildContext context) => new DialogConfirmPackageBill(order: createdOrder,
-        authToken: authToken, scaffoldKey: _scaffoldKey, 
+        authToken: authToken, scaffoldKey: _scaffoldKey,
         sharedPreferences: _sharedPreferences)
       );
       isWaiting = true;
-    } else { 
-     
-    }  
-    
+    } else {
+
+    }
+
   }
- 
+
   @override
   Widget build(BuildContext context) {
     double total = 0;
@@ -503,7 +503,7 @@ class DialogConfirmPackageBill extends StatelessWidget {
 
 
   Future _acceptOrder(BuildContext context) async {
-   
+
     Navigator.of(context).push(
       new PageRouteBuilder(
         pageBuilder: (BuildContext context, _, __) {
@@ -527,7 +527,7 @@ class DialogConfirmPackageBill extends StatelessWidget {
                     check = await pref.remove('packageType');
                     check = await pref.remove('isPageTwoExist');
                     check = await pref.remove('isPageThreeExist');
-                  
+
                     check = await pref.remove('PromptionCode');
                     check = await pref.remove('Service');
                     check = await pref.remove('TotalService');
@@ -542,7 +542,7 @@ class DialogConfirmPackageBill extends StatelessWidget {
   }
   @override
   Widget build(BuildContext context) {
-   
+
     DateTime now = DateTime.now();
     print(now.hour);
     return WillPopScope(
@@ -578,9 +578,9 @@ class DialogConfirmPackageBill extends StatelessWidget {
                 )),
                 SizedBox(height: 20.0),
                 InkWell(
-                  onTap: () async{                
+                  onTap: () async{
                     _acceptOrder(context);
-                    _removePref();              
+                    _removePref();
                     },
                   child: new Container(
                     width: 146,
@@ -597,10 +597,10 @@ class DialogConfirmPackageBill extends StatelessWidget {
           ),
         ),
       ),
-    ) 
-      
+    )
+
       ,
     );
-  
+
   }
 }

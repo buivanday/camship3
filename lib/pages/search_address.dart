@@ -25,17 +25,17 @@ class _GetStartedState extends State<SearchAddress> {
     if(address == ''||address.length==0) {
       setState(() {
         _predictions = null;
-       
+
         isLoading =false;
         isChoose= false;
       });
     } else {
       setState(() {
-       isLoading = true; 
+       isLoading = true;
       });
       var responseJson = await NetworkUtils.httpGetAddress(address);
       var predictions = responseJson['predictions'];
-  
+
       if(responseJson['status'] == 'OK') {
         setState(() {
           _predictions = predictions;
@@ -77,7 +77,7 @@ class _GetStartedState extends State<SearchAddress> {
                         icon: Icon(Icons.arrow_back),
                         color: Colors.white,
                         alignment: Alignment.centerLeft,
-                        onPressed: () { 
+                        onPressed: () {
                           Navigator.pop(context);
                         }
                       ),
@@ -160,13 +160,13 @@ class _GetStartedState extends State<SearchAddress> {
                             labelStyle: TextStyle(color: HexColor('#B0BEC5'), fontSize: 14.0),
                             suffixIcon: isChoose ? InkWell(
                               onTap: () {
-                                
+
                                 setState(() {
                                   isChoose = false;
                                   _predictions=null;
                                   WidgetsBinding.instance.addPostFrameCallback((_){
                                     _addressController.clear();
-                                 
+
                                  // isLoading = false;
                                   _predictions=null;
                                   });
@@ -177,11 +177,11 @@ class _GetStartedState extends State<SearchAddress> {
                           ),
                           textCapitalization: TextCapitalization.sentences,
                           controller: _addressController,
-                          
+
                           onChanged: (String address) {
                             print(isChoose.toString()+" "+isLoading.toString());
                             _searchAddress(address);
-                        
+
                           },
                           style: TextStyle(color: HexColor('#455A64')),
                         ),
@@ -197,7 +197,7 @@ class _GetStartedState extends State<SearchAddress> {
                       flex: 1,
                       child: Stack(
                         children: <Widget>[
-                          Container(
+                      Container(
                         padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: _predictions != null   &&!isChoose ? ListView.builder(
                           itemCount: _predictions.length,
@@ -226,12 +226,12 @@ class _GetStartedState extends State<SearchAddress> {
                                           Text(_predictions[position]['structured_formatting']['main_text']!=null?
                                           _predictions[position]['structured_formatting']['main_text']:""
                                           ,
-                                            overflow: TextOverflow.ellipsis, 
+                                            overflow: TextOverflow.ellipsis,
                                             maxLines: 1,
                                             softWrap: false,
                                             style: TextStyle(color: HexColor('#455A64'), fontSize: 14.0),),
                                           SizedBox(height: 2.0,),
-                                          Text(_predictions[position]['structured_formatting']['secondary_text']!=null? 
+                                          Text(_predictions[position]['structured_formatting']['secondary_text']!=null?
                                             _predictions[position]['structured_formatting']['secondary_text'] : "",
                                             overflow: TextOverflow.ellipsis,
                                             maxLines: 1,

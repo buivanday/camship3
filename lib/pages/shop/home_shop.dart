@@ -53,14 +53,14 @@ class _HomeShopState extends State<HomeShop> {
   _deletePref()async{
     _sharedPreferences = await _prefs;
    _sharedPreferences.remove('Deliverytime');
-                    
+
                      _sharedPreferences.remove('HeightNumber');
                     _sharedPreferences.remove('LengthNumber');
                     _sharedPreferences.remove('NoteTxt');
                      _sharedPreferences.remove('packageType');
                     _sharedPreferences.remove('isPageTwoExist');
                      _sharedPreferences.remove('isPageThreeExist');
-                  
+
                      _sharedPreferences.remove('PromptionCode');
                      _sharedPreferences.remove('Service');
                      _sharedPreferences.remove('TotalService');
@@ -72,7 +72,7 @@ class _HomeShopState extends State<HomeShop> {
 
                      _sharedPreferences.setBool("isPageTwoExist", false);
                      _sharedPreferences.setBool("isPageThreeExist", false);
-    
+
   }
   void _onItemTapped(int index) {
     setState(() {
@@ -118,7 +118,7 @@ class _HomeShopState extends State<HomeShop> {
       default:
     }
   }
-  
+
   @override
   void dispose() {
     _searchBloc.dispose();
@@ -143,7 +143,7 @@ class _HomeShopState extends State<HomeShop> {
     }else{
       isOffline = false;
     }
-    
+
     return WillPopScope(
       onWillPop: () {},
       child: DefaultTabController(
@@ -283,7 +283,7 @@ class SearchResultWidget extends StatelessWidget {
   final List<ShopOrder> items;
   final bool fromCashedOut = false;
 
-  SearchResultWidget({Key key, @required this.items, bool visible, bool fromCashedOut}) 
+  SearchResultWidget({Key key, @required this.items, bool visible, bool fromCashedOut})
       : this.visible = visible ?? items.isNotEmpty,
         super(key: key);
 
@@ -400,7 +400,7 @@ class _ShopOrderWidgetState extends State<ShopOrderWidget> {
 
     return STATUSES[widget.order.currentStatusValue - 1]['name'];
   }
-  
+
   Widget get _header => (
     Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -517,7 +517,7 @@ class _ShopOrderWidgetState extends State<ShopOrderWidget> {
       String extraService = order.orderPackages['extraService'];
       bool isShopPaid = order.orderPackages['isShopPaid'];
       dynamic valueOfOrder = order.valueOfOrder ?? 0;
-      
+
       dynamic shippingCost = order.shippingCost ?? 0;
       dynamic totalCOD = order.totalCOD ?? 0;
       if(extraService == 'cod') {
@@ -528,11 +528,11 @@ class _ShopOrderWidgetState extends State<ShopOrderWidget> {
         }
       } else {
         if(isShopPaid) {
-          total -= shippingCost;
+          total = shippingCost;
         }
       }
     }
-    
+
     return order == null ? Center(child:CircularProgressIndicator()) : InkWell(
       onTap: () async {
         Navigator.push(context, MaterialPageRoute(

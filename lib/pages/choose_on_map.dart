@@ -6,14 +6,12 @@ import 'package:farax/pages/search_address.dart';
 import 'package:farax/utils/network_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:geolocator/geolocator.dart' as prefix0;
 import '../components/gradient_appbar.dart';
 import '../all_translations.dart';
 import 'get_started.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 import 'package:location/location.dart';
-import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
 import 'package:farax/services/connectivity.dart';
@@ -74,9 +72,13 @@ class _ChooseOnMapState extends State<ChooseOnMap> {
   Future _getAddress(lat, lng) async {
     var responseJson = await NetworkUtils.postWithBodyWithoutAuth(
         '/api/Zones/find-address', {"lat": lat, "lng": lng});
+      if(mounted)
         setState(() {
                   isLoading = true;
                 });
+      else{
+        isLoading = true;
+      }
     return responseJson;
   }
 
@@ -101,11 +103,11 @@ class _ChooseOnMapState extends State<ChooseOnMap> {
       // currentLocation = null;
       throw e;
     }
-    
+
   }
 
   void _onMapCreated(GoogleMapController controller) async {
-    
+
     if (Platform.isIOS) {
       markerIcon = await getBytesFrommAsset('icons/current.png', 80);
     } else {
@@ -125,7 +127,7 @@ class _ChooseOnMapState extends State<ChooseOnMap> {
             ),
           ),
         );
-        
+
 
 
         try {
@@ -134,7 +136,7 @@ class _ChooseOnMapState extends State<ChooseOnMap> {
             _addressController.text = _.first["formattedAddress"];
             _lastMapPosition =
                 new LatLng(location.latitude, location.longitude);
-            
+
             WidgetsBinding.instance.addPostFrameCallback((_) => setState(() {
                   isLoading = true;
                 }));
@@ -229,7 +231,7 @@ class _ChooseOnMapState extends State<ChooseOnMap> {
           .then((_) {
         _addressController.text = _.first["formattedAddress"];
       });
-      
+
       setState(() {
         _isValid = true;
       });
@@ -330,7 +332,7 @@ class _ChooseOnMapState extends State<ChooseOnMap> {
               Expanded(
                 child: Stack(
                   children: <Widget>[
-                    
+
                     GoogleMap(
                       onMapCreated: _onMapCreated,
                       initialCameraPosition: CameraPosition(

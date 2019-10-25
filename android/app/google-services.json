@@ -1,42 +1,43 @@
 {
   "project_info": {
-    "project_number": "837941542195",
-    "firebase_url": "https://camships-9bbbd.firebaseio.com",
-    "project_id": "camships-9bbbd",
-    "storage_bucket": "camships-9bbbd.appspot.com"
+    "project_number": "759991688790",
+    "firebase_url": "https://camship.firebaseio.com",
+    "project_id": "camship",
+    "storage_bucket": "camship.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:837941542195:android:ad88e53ea106b1cc",
+        "mobilesdk_app_id": "1:759991688790:android:772966e455a1478984e5f7",
         "android_client_info": {
           "package_name": "com.farax.camships"
         }
       },
       "oauth_client": [
         {
-          "client_id": "837941542195-4u91486f8p9ct1pc23eh1b7ccdgumju9.apps.googleusercontent.com",
+          "client_id": "759991688790-e3ir6kde5cbumk63hoqkqk27e23lrrhn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.farax.camships",
+            "certificate_hash": "72dd8d67b43df9118ba72dfaa5cffb83df92cc60"
+          }
+        },
+        {
+          "client_id": "759991688790-ev2497nrk6ig2l4mgemhk86us9d3ln4s.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCyHIWT3BqOOEl0zfSk7Zkgt8yVAZMUkOs"
+          "current_key": "AIzaSyB-LqeMdZa0pVbzmM5iptywIypEKLCmGmk"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "837941542195-4u91486f8p9ct1pc23eh1b7ccdgumju9.apps.googleusercontent.com",
+              "client_id": "759991688790-ev2497nrk6ig2l4mgemhk86us9d3ln4s.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "837941542195-pdhctl2i4cni2nu0hp7njn6sj83f5f76.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.farax.camships"
-              }
             }
           ]
         }

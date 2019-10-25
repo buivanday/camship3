@@ -38,7 +38,7 @@ void main() {
     await allTranslations.init();
       runApp(MyApp(), );
   });
-  
+
 }
 
 class MyApp extends StatefulWidget {
@@ -52,39 +52,27 @@ class _MyAppState extends State<MyApp> {
   SharedPreferences _sharedPreferences;
   var platform = MethodChannel('crossingthestreams.io/resourceResolver');
   String _imageUrl = 'https://flutter.io/images/catalog-widget-placeholder.png';
-  
+
   @override
   void initState(){
 
     super.initState();
-    firebaseCloudMessaging_Listeners();
+    firebaseCloudMessagingListeners();
   }
 
-  void firebaseCloudMessaging_Listeners() async {
+  void firebaseCloudMessagingListeners() async {
     _sharedPreferences = await _prefs;
-    if (Platform.isIOS) iOS_Permission();
+    if (Platform.isIOS) iOSPermission();
     _firebaseMessaging.getToken().then((token){
+      print("token: "+token);
       _sharedPreferences.setString('registrationToken', token);
     });
-
-    // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
-    // var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
-    // var initializationSettingsIOS = IOSInitializationSettings();
-    // var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
-    // flutterLocalNotificationsPlugin.initialize(initializationSettings);
-
-    // var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
-    //     'location_update', 'Location Updates', 'You will receive location updates here',
-    //     importance: Importance.Max, priority: Priority.High);
-    // var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
-    // var platformChannelSpecifics = new NotificationDetails(
-    //     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
-    // await flutterLocalNotificationsPlugin.show(
-    //     0, 'New Location Received !', "Test", platformChannelSpecifics);
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         print('on message $message');
+
       },
+
       onResume: (Map<String, dynamic> message) async {
         print('on resume $message');
       },
@@ -92,15 +80,9 @@ class _MyAppState extends State<MyApp> {
         print('on launch $message');
       },
     );
-    // var channel = IOWebSocketChannel.connect("wss://camships.com:3000");
-
-    // channel.stream.listen((message) {
-    //   // channel.sink.add("received!");
-    //   print(message);
-    // });
   }
 
-  void iOS_Permission() {
+  void iOSPermission() {
     _firebaseMessaging.requestNotificationPermissions(
         IosNotificationSettings(sound: true, badge: true, alert: true)
     );
@@ -115,12 +97,24 @@ class _MyAppState extends State<MyApp> {
       // do anything you need to do if the language changes
       print('Language has been changed to: ${allTranslations.currentLanguage}');
   }
+Future<dynamic> myBackgroundMessageHandler(Map<String, dynamic> message) {
+  if (message.containsKey('data')) {
+    // Handle data message
+    final dynamic data = message['data'];
+  }
 
+  if (message.containsKey('notification')) {
+    // Handle notification message
+    final dynamic notification = message['notification'];
+  }
+
+  // Or do other work.
+}
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     final MainModel _model = MainModel();
-    
+
     return ScopedModel<MainModel>(
       model: _model,
       child: MultiProvider(
@@ -128,7 +122,7 @@ class _MyAppState extends State<MyApp> {
           StreamProvider<ConnectionStatus>.value(
             value: ConnectivityService().connectivityController.stream,
           ),
-        ], 
+        ],
         child: MaterialApp(
           title: 'Farax',
           localizationsDelegates: [
@@ -204,3 +198,24 @@ class _LoadingScreenState extends State<LoadingScreen> {
     );
   }
 }
+//
+// var channel = IOWebSocketChannel.connect("wss://camships.com:3000");
+
+    // channel.stream.listen((message) {
+    //   // channel.sink.add("received!");
+    //   print(message);
+    // });
+     // FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = new FlutterLocalNotificationsPlugin();
+    // var initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+    // var initializationSettingsIOS = IOSInitializationSettings();
+    // var initializationSettings = InitializationSettings(initializationSettingsAndroid, initializationSettingsIOS);
+    // flutterLocalNotificationsPlugin.initialize(initializationSettings);
+
+    // var androidPlatformChannelSpecifics = new AndroidNotificationDetails(
+    //     'location_update', 'Location Updates', 'You will receive location updates here',
+    //     importance: Importance.Max, priority: Priority.High);
+    // var iOSPlatformChannelSpecifics = new IOSNotificationDetails();
+    // var platformChannelSpecifics = new NotificationDetails(
+    //     androidPlatformChannelSpecifics, iOSPlatformChannelSpecifics);
+    // await flutterLocalNotificationsPlugin.show(
+    //     0, 'New Location Received !', "Test", platformChannelSpecifics);

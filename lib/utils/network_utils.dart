@@ -7,7 +7,10 @@ import '../all_translations.dart';
 
 class NetworkUtils {
 	static final String host = 'https://camships.com:3000';
+  //AIzaSyARcYGPWEpcRSKw8sAuCWTztTQfTio70g8
+  //AIzaSyC8V6p9SdM7cTPTnrJHdGr3oYVQ4Wvi9rc
 
+  //AIzaSyD-SBeYjgsC0QA4zu5Nk7QPRPLS8li9cgc
 	static dynamic authenticateUser(String email, String password) async {
 		var uri = host + AuthUtils.endPoint;
 
@@ -71,7 +74,7 @@ class NetworkUtils {
   static httpGetAddress(String address) async {
     try {
 			final response = await http.get(
-				"https://maps.googleapis.com/maps/api/place/autocomplete/json?input="+ Uri.encodeFull(address)+"&inputtype=textquery&fields=address_component,adr_address,alt_id,formatted_address,geometry,icon,id,name,permanently_closed,photo,place_id,plus_code,scope,type,url,utc_offset,vicinity&components=country:kh&types=geocode|establishment&key=AIzaSyARcYGPWEpcRSKw8sAuCWTztTQfTio70g8",
+				"https://maps.googleapis.com/maps/api/place/autocomplete/json?input="+ Uri.encodeFull(address)+"&inputtype=textquery&fields=address_component,adr_address,alt_id,formatted_address,geometry,icon,id,name,permanently_closed,photo,place_id,plus_code,scope,type,url,utc_offset,vicinity&components=country:kh&types=geocode|establishment&key=AIzaSyD-SBeYjgsC0QA4zu5Nk7QPRPLS8li9cgc",
 			);
 
 			final responseJson = json.decode(response.body);
@@ -88,7 +91,7 @@ class NetworkUtils {
   static httpGetAddressDetail(String placeId) async {
     try {
 			final response = await http.get(
-				"https://maps.googleapis.com/maps/api/place/details/json?placeid="+placeId+"&key=AIzaSyARcYGPWEpcRSKw8sAuCWTztTQfTio70g8",
+				"https://maps.googleapis.com/maps/api/place/details/json?placeid="+placeId+"&key=AIzaSyD-SBeYjgsC0QA4zu5Nk7QPRPLS8li9cgc",
 			);
 
 			final responseJson = json.decode(response.body);
@@ -105,7 +108,7 @@ class NetworkUtils {
   static httpGetDetailFromLatLng(String lat, String lng) async {
     try {
 			final response = await http.get(
-				"https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat.toString()+","+lng.toString()+"&result_type=sublocality|establishment|route&key=AIzaSyARcYGPWEpcRSKw8sAuCWTztTQfTio70g8",
+				"https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat.toString()+","+lng.toString()+"&result_type=sublocality|establishment|route&key=AIzaSyD-SBeYjgsC0QA4zu5Nk7QPRPLS8li9cgc",
 			);
 
 			final responseJson = json.decode(response.body);

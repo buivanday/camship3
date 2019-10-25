@@ -62,7 +62,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
   dynamic itemsInfo;
   int i=0;
   CreatePackageSharePreference createPackageInformationSharePreference = new CreatePackageSharePreference();
- 
+
 
    Map<String, dynamic> shopInformation;
    Map<String, dynamic> receiverInformation;
@@ -96,8 +96,8 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
 		}
     createPackageInformationSharePreference.setPageThreeExist(true);
 	}
-  
-  
+
+
   _addItem() async{
     TextEditingController nameController = new TextEditingController();
     TextEditingController priceController = new TextEditingController();
@@ -105,20 +105,20 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
     int id= codItems.length;
       codItemControllers.add(nameController);
       codItemControllers.add(amountController);
-      codItemControllers.add(priceController);    
-    setState(() { 
+      codItemControllers.add(priceController);
+    setState(() {
       codItems.add( new CodItem(index: id+1, nameController: nameController, priceController: priceController, amountController: amountController,onDelete: (){_onDelete(id);},));
     });
   }
 
   void _onDelete(int index)async{
-    setState(() {         
+    setState(() {
         codItems.removeAt(index);
       if(codItemControllers.isNotEmpty) {
         codItemControllers.removeRange(index * 3, index * 3 + 3);
       }
     });
-      
+
   }
 
   bool _valid() {
@@ -133,7 +133,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
 		NetworkUtils.logoutUser(_scaffoldKey.currentContext, _sharedPreferences);
 	}
   _infoBill(double total,List<Map<String,dynamic>>items) async{
-   
+
   }
   Future<bool>_backPageWillPop()async{
     _backPage();
@@ -208,7 +208,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                             setState(() {
                                               isClickShop = true;
                                               isClickCustomer = false;
-                                              
+
                                             });
                                             createPackageInformationSharePreference.setWhoPay(1);
                                           },),
@@ -217,7 +217,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                             setState(() {
                                               isClickShop = false;
                                               isClickCustomer = true;
-                                              
+
                                             });
                                             createPackageInformationSharePreference.setWhoPay(2);
                                           },),
@@ -234,7 +234,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                             setState(() {
                                               isClickCod = true;
                                               isClickExpress = false;
-                                              
+
                                             });
                                             createPackageInformationSharePreference.setService(1);
                                             codItems.length<= 0 ? _addItem() :'';
@@ -244,7 +244,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                             setState(() {
                                               isClickCod = false;
                                               isClickExpress = true;
-                                              
+
                                             });
                                             createPackageInformationSharePreference.setService(2);
                                           },),
@@ -255,7 +255,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                       children: <Widget>[
                                         SizedBox(height: 30.0,),
                                         Column(
-                                          children: 
+                                          children:
                                            codItems
                                           ,
                                         ),
@@ -295,8 +295,8 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                           ),
                                           controller: totalController,
                                           keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                          onChanged: (value){                                             
-                                                createPackageInformationSharePreference.setTotalService(double.parse(value));                                              
+                                          onChanged: (value){
+                                                createPackageInformationSharePreference.setTotalService(double.parse(value));
                                           },
                                         ),
                                       ),
@@ -308,11 +308,11 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                     Text(allTranslations.text('promotion_code'), style: TextStyle(color: HexColor('#455A64'), fontWeight: FontWeight.bold),),
                                     TextField(
                                       controller: promotionCodeController,
-                                      onChanged: (value){                                      
-                                          createPackageInformationSharePreference.setPromptionCode(value);                                       
+                                      onChanged: (value){
+                                          createPackageInformationSharePreference.setPromptionCode(value);
                                       },
                                       decoration: InputDecoration(
-                                      
+
                                         hintText: allTranslations.text('enter_promotion_code'),
                                         hintStyle: TextStyle(
                                           color: HexColor('#90A4AE'),
@@ -371,7 +371,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                                   'price': item[2].text
                                                 };
                                               }).toList();
-                                  
+
                                               bool hasError = false;
                                               double total = 0;
                                               double totalCOD = 0;
@@ -388,7 +388,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
 
                                                 if(total >= 100) {
                                                   totalCOD = total * 0.5 / 100;
-                                                } 
+                                                }
                                               }
                                               if(hasError) {
                                                 Fluttertoast.showToast(
@@ -406,7 +406,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                                 SharedPreferences pref = await _prefs;
                                                 var jsonDataPageOne =  pref.getString('dataPageOne');
                                                 var jsonDataPageTwo = pref.getString('dataPageTwo');
-                                                
+
                                                 if(jsonDataPageOne==null|| jsonDataPageTwo==null) return;
                                                 var obj = jsonDecode(jsonDataPageOne);
                                                 var dataPage2 =jsonDecode(jsonDataPageTwo);
@@ -437,17 +437,17 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                                                   "price":information['price'],
                                                   'currencyId':'5ca479e13ba7381850a0d2d7',
                                                 };
-                                              
+
                                                 totalShippingPrice= dataPage2['totalShippingPrice'];
-                                                
+
                                                 deliveryTime= dataPage2['deliveryTime'];
                                                 totalCOD= isClickCod ? totalCOD : 0;
                                                 totalExpress =isClickExpress ? totalExpress : 0 ;
                                                 valueOfOrder=isClickCod ? total : 0;
                                                 shopNotes= dataPage2['shopNotes'];
-                                              
-                                              
-                                              FocusScope.of(context).requestFocus(fcBtnSubmit);  
+
+
+                                              FocusScope.of(context).requestFocus(fcBtnSubmit);
                                                 Navigator.of(context).push(
                                                   new PageRouteBuilder(
                                                     pageBuilder: (BuildContext context, _, __) {
@@ -499,7 +499,7 @@ class _CreatePackageServicesState extends State<CreatePackageServices> {
                 ),
               )
             ),
-           
+
           ]
         )
       )
@@ -530,9 +530,9 @@ class CodItem extends StatefulWidget {
 }
 
 class _CodItemState extends State<CodItem> {
- 
+
   CreatePackageSharePreference prefs = new CreatePackageSharePreference();
-  
+
   List<String> itemsName=[];
   static List<String> itemsAmount=[];
   static List<String> itemsPrice=[];
@@ -542,13 +542,13 @@ class _CodItemState extends State<CodItem> {
   int id;
   @override
   void initState() {
-    
+
     super.initState();
-    
+
   }
   @override
   void dispose() {
-    
+
     super.dispose();
     focusNodeName.dispose();
     focusNodeAmount.dispose();
@@ -557,7 +557,7 @@ class _CodItemState extends State<CodItem> {
 
   _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
     currentFocus.unfocus();
-    FocusScope.of(context).requestFocus(nextFocus);  
+    FocusScope.of(context).requestFocus(nextFocus);
   }
   @override
   Widget build(BuildContext context) {
@@ -585,12 +585,12 @@ class _CodItemState extends State<CodItem> {
           ),
           child: TextField(
             autofocus: false,//widget.nameController.text.isEmpty? false : true,
-            onChanged: (value){          
-                
+            onChanged: (value){
+
             },
             onSubmitted: (value){
             _fieldFocusChange(context, focusNodeName, focusNodeAmount);
-           
+
             },
             focusNode: focusNodeName,
             textInputAction: TextInputAction.next,
@@ -635,7 +635,7 @@ class _CodItemState extends State<CodItem> {
             },
             onSubmitted: (value){
               focusNodePrice.unfocus();
-              
+
             },
             focusNode: focusNodePrice,
             textInputAction: TextInputAction.done,

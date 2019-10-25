@@ -29,7 +29,7 @@ class CreatePackageInformation extends StatefulWidget {
   // final Map<String, dynamic> receiverInformation;
   final Map<String, dynamic> zoneInformation;
   //final bool isSaveContact;
-  
+
   @override
   _CreatePackageInformationState createState() => _CreatePackageInformationState();
 }
@@ -105,7 +105,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
 
    //String _regExp='^\d{0,6}(\.\d{0,2})?\$';
   CreatePackageSharePreference createPackageInformationSharePreference = new CreatePackageSharePreference();
-  
+
 
   @override
 	void initState() {
@@ -117,7 +117,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
     super.dispose();
   }
   _prefInit()async{
-    
+
   bool isPageCrePacInf = await createPackageInformationSharePreference.isPageTwoExist();
   if(!isPageCrePacInf) return;
 
@@ -137,8 +137,8 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
   lengthController.text =lengthNumber==0.0? '' : lengthNumber.toString();
   widthController.text = widthNumber==0.0? '':widthNumber.toString();
   heightController.text = heightNumber==0.0?'' : heightNumber.toString();
-  
-   weightController.text= weightNumber==0.0 ? '' :weightNumber.toString() ; 
+
+   weightController.text= weightNumber==0.0 ? '' :weightNumber.toString() ;
    print(weightNumber==0);
    _actualWeight =weightNumber;
   //  totalShippingPrice = weightNumber >= 3 ? (shippingPrice + (weightNumber - 3) * 0.25) : shippingPrice;
@@ -147,9 +147,9 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
   _handleChangePackageType(packageType);
    shopNoteController.text =noteTxt;
    _calculateWeight();
-  
+
   }
-  
+
   void dataPage()async{
     createPackageInformationSharePreference.setDeliverytime(shippingPrice);
     createPackageInformationSharePreference.setPackageType(packageType);
@@ -169,11 +169,11 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
         isClickRightButton = false;
       break;
       case 2:
-        isClickLeftButton= false; 
+        isClickLeftButton= false;
         isClickRightButton = true;
       break;
     }
-    
+
   }
   _deliverytimeCase(double shippingPrice){
     if(shippingPrice==2.0){
@@ -196,7 +196,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
       isClick12h = true;
       isClick24h = false;
     }
-    else if(shippingPrice==1){ 
+    else if(shippingPrice==1){
       isClick3h = false;
       isClick6h = false;
       isClick12h = false;
@@ -228,7 +228,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
 	}
 
   bool _valid() {
-    String weight = weightController.text; 
+    String weight = weightController.text;
     //print(weight);
 
     return !isOffline && _isValid(packageType) && (isClick3h || isClick6h || isClick12h || isClick24h) && ((isClickLeftButton&& _isValid(weight) && double.parse(weight) > 0) || isClickRightButton) && totalShippingPrice > 0;
@@ -247,8 +247,8 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
     String height = heightController.text;
     double weight = (double.parse(length == ''? '0' : length) * double.parse(width == '' ? '0' : width) * double.parse(height == '' ? '0' : height)) / 5000;
     //weightController.text = weight.toString();
-    
-    
+
+
     setState(() {
       if(isClickLeftButton)
     {
@@ -263,7 +263,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
 
   _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
     currentFocus.unfocus();
-    FocusScope.of(context).requestFocus(nextFocus);  
+    FocusScope.of(context).requestFocus(nextFocus);
   }
   Future<bool>_backPageWillPop() async{
     _backPage();
@@ -274,12 +274,12 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
       Navigator.of(context).pushReplacement(new PageRouteBuilder(
             pageBuilder: (BuildContext context, _,__ ){
               return CreatePackage(
-               
+
               );
             }
           ));
   }
-  
+
   @override
   Widget build(BuildContext context) {
     var network = Provider.of<ConnectionStatus>(context);
@@ -312,7 +312,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                         icon: Icon(Icons.arrow_back),
                         color: Colors.white,
                         alignment: Alignment.centerLeft,
-                        onPressed: () { 
+                        onPressed: () {
                           _backPage();
                         },
                       ),
@@ -381,7 +381,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                             InkWell(
                               onTap: () {
                                 _backPage();
-                              
+
                               },
                               child: CircleAvatar(
                                 backgroundColor: HexColor('#FF9933'),
@@ -394,7 +394,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                               ),
                             ),
                             new DashActive(),
-                            
+
                             new DashActive(),
                             new StepActive(index: 2,),
                             new DashActive(),
@@ -402,7 +402,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                               future: createPackageInformationSharePreference.isPageThreeExist(),
                               builder: (BuildContext context,AsyncSnapshot<bool>snapshot){
                                 return snapshot.hasData && snapshot.data ? Row(
-                                  children: <Widget>[                                 
+                                  children: <Widget>[
                                     new DashActive(),
                                     //new StepLastActive(index: 3,current: 2,)
                                     InkWell(
@@ -462,9 +462,9 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                               isClick12h = false;
                                               isClick24h = false;
                                               shippingPrice = double.parse(widget.zoneInformation['2h'].toString());
-                                              
+
                                               //createPackageInformationSharePreference.setDeliverytime(2);
-                                              
+
                                             });
                                             _calculateWeight();
                                           },) : Container(),
@@ -559,14 +559,14 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                     TextField(
                                       textInputAction: TextInputAction.go,
                                       focusNode: _weightFocusNode,
-                                      
+
                                     //  inputFormatters: [WhitelistingTextInputFormatter(new RegExp(_regExp))],
                                       decoration: InputDecoration(
                                         suffix: Container(
                                           width: 100.0,
                                           height: 36.0,
                                           decoration: BoxDecoration(
-                                            
+
                                             borderRadius: BorderRadius.all(Radius.circular(4.0)),
                                             gradient: LinearGradient(
                                               stops: [0.0, 1.3214],
@@ -579,7 +579,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                         )
                                       ),
                                       keyboardType: TextInputType.numberWithOptions(decimal: true),
-                                      
+
                                       onChanged: (String value) {
                                         setState(() {
                                           if(value=='')
@@ -621,7 +621,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                                // autofocus: true,
                                                decoration: InputDecoration(counterText: ''),
                                                 onFieldSubmitted: (value) {
-                                                  widthController.text = ''; 
+                                                  widthController.text = '';
                                                   //createPackageInformationSharePreference.setLengthNumber(double.parse(lengthController.text));
                                                   _fieldFocusChange(context, _lengthFocusNode, _widthFocusNode);
                                                   },
@@ -630,8 +630,8 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                                 //  createPackageInformationSharePreference.setLengthNumber(double.parse(lengthController.text));
                                                   _calculateWeight();
                                                 },
-                                              
-                                                
+
+
                                               ),
                                             ],
                                           ),
@@ -654,14 +654,14 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                                   heightController.text = '';
                                                   //createPackageInformationSharePreference.seWidthNumber(double.parse(widthController.text));
                                                   _fieldFocusChange(context, _widthFocusNode, _heightFocusNode);
-                                                }, 
+                                                },
                                                 ),
                                                 onChanged: (){
                                                   //createPackageInformationSharePreference.seWidthNumber(double.parse(widthController.text));
                                                   _calculateWeight();
                                                 },
                                               ),
-                                              
+
                                             ],
                                           ),
                                         ),
@@ -673,7 +673,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                             children: <Widget>[
                                               Text(allTranslations.text('height') + ' (cm)', style: TextStyle(color: HexColor('#B0BEC5')),),
                                               Form(
-                                                
+
                                                 child: TextFormField(
                                                // inputFormatters: [],
                                                 keyboardType: TextInputType.numberWithOptions(decimal: true),
@@ -690,7 +690,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                                   _calculateWeight();
                                                 } ,
                                               ),
-                                              
+
                                             ],
                                           ),
                                         )
@@ -719,7 +719,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                   opacity: 0.0,
                                 ),
                               ),
-                              
+
                               FutureBuilder<List<dynamic>>(
                                 future: fetchPackageTypes(),
                                 builder: (context, snapshot) {
@@ -814,10 +814,10 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                       flex: 2,
                                       child: RaisedButton(
                                         onPressed: _valid() ? (
-                                          
+
                                         ) async{
                                           bool checkPage = await createPackageInformationSharePreference.isPageThreeExist();
-                                          
+
                                           createPackageInformationSharePreference.setPageTwoExist(true);
                                           dynamic obj ={
                                             'zoneInformation' : widget.zoneInformation,
@@ -835,18 +835,18 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                                           },
                                             'totalShippingPrice': totalShippingPrice,
                                             'deliveryTime': isClick3h ? '2h' : (isClick6h ? '4h' : (isClick12h ? '8h' : '24h')),
-                                            'shopNotes': shopNoteController.text    
+                                            'shopNotes': shopNoteController.text
                                           };
                                           SharedPreferences pref = await _prefs;
                                           String pageTwoData = jsonEncode(obj);
-                                            await pref.setString('dataPageTwo', pageTwoData); 
+                                            await pref.setString('dataPageTwo', pageTwoData);
 
                                           dataPage();
 
                                           if(checkPage==true){
                                               Navigator.of(context).pop();
                                             }
-                                        else 
+                                        else
                                           Navigator.of(context).pushReplacement(
                                             new PageRouteBuilder(
                                               pageBuilder: (BuildContext context, _, __) {
@@ -864,7 +864,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                                               },
                                             )
                                           );
-                                        
+
                                         } : null,
                                         disabledColor: HexColor('#B0BEC5'),
                                         disabledTextColor: Colors.white,
@@ -894,7 +894,7 @@ class _CreatePackageInformationState extends State<CreatePackageInformation> {
                 ),
               )
             ),
-            
+
           ]
         )
       )

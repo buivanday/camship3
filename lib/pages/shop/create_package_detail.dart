@@ -49,7 +49,7 @@ class _CreatePackageDetailState extends State<CreatePackageDetail> {
   var _addressCustomerController = new TextEditingController();
   var _weightController = new TextEditingController();
   var _valueOfOrderController = new TextEditingController();
-  final FocusNode _fullNameFocusNode = FocusNode(); 
+  final FocusNode _fullNameFocusNode = FocusNode();
   final FocusNode _phoneNumberFocusNode = FocusNode();
   var lengthController = new TextEditingController();
   var widthController = new TextEditingController();
@@ -99,8 +99,8 @@ class _CreatePackageDetailState extends State<CreatePackageDetail> {
       isClickRightButton = widget.order.orderPackages['typeOfCalWeight'] != 'actualWeight';
       deliveryTimeId = widget.order.delivery['time'];
       _valueOfOrderController.text = widget.order.valueOfOrder.toString();
-      var now = new DateTime.now().millisecondsSinceEpoch;  
-      
+      var now = new DateTime.now().millisecondsSinceEpoch;
+
       for(var i = 0; i < widget.order.orderPackages['items'].length; i ++) {
         TextEditingController nameController = new TextEditingController(text: widget.order.orderPackages['items'][i]['name']);
         TextEditingController priceController = new TextEditingController(text: widget.order.orderPackages['items'][i]['price'].toString());
@@ -109,10 +109,10 @@ class _CreatePackageDetailState extends State<CreatePackageDetail> {
         codItemControllers.add(nameController);
         codItemControllers.add(amountController);
         codItemControllers.add(priceController);
-        var now = new DateTime.now().millisecondsSinceEpoch + i;  
+        var now = new DateTime.now().millisecondsSinceEpoch + i;
       //   codItems.add(new CodItem(index: codItems.length + 1, nameController: nameController, priceController: priceController, timeStamp: now, amountController: amountController, onDelete: () {_onDelete(now);},));
       // }
-        
+
         codItemControllersCurrent.add(nameController);
         codItemControllersCurrent.add(amountController);
         codItemControllersCurrent.add(priceController);
@@ -120,7 +120,7 @@ class _CreatePackageDetailState extends State<CreatePackageDetail> {
         int id2 = codItemCurrent.length;
         codItemCurrent.add(new CodItem(index: codItemCurrent.length + 1, nameController: nameController, priceController: priceController, timeStamp: now, amountController: amountController, onDelete: () {_onDelete(id2);},));
         codItems.add(new CodItem(index: codItems.length + 1, nameController: nameController, priceController: priceController, timeStamp: now, amountController: amountController, onDelete: () {_onDelete(id);},));
-      }   
+      }
     }
 	}
 
@@ -139,13 +139,13 @@ class _CreatePackageDetailState extends State<CreatePackageDetail> {
       codItemControllers.add(nameController);
       codItemControllers.add(amountController);
       codItemControllers.add(priceController);
-      var now = new DateTime.now().millisecondsSinceEpoch + i;  
+      var now = new DateTime.now().millisecondsSinceEpoch + i;
       codItems.add(new CodItem(index: codItems.length + 1, nameController: nameController, priceController: priceController, timeStamp: now, amountController: amountController, onDelete: () {_onDelete(now);},));
-      
+
     }
 
     setState(() {
-      codItems = codItems;  
+      codItems = codItems;
     });
   }
 
@@ -240,7 +240,7 @@ class _CreatePackageDetailState extends State<CreatePackageDetail> {
 
   _fieldFocusChange(BuildContext context, FocusNode currentFocus,FocusNode nextFocus) {
     currentFocus.unfocus();
-    FocusScope.of(context).requestFocus(nextFocus);  
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 
   Future _showDialog() async {
@@ -250,7 +250,7 @@ class _CreatePackageDetailState extends State<CreatePackageDetail> {
       await showDialog<String>(
         context: context,
         builder: (BuildContext context) => new DialogDeletePackage(
-        authToken: authToken, scaffoldKey: _scaffoldKey, 
+        authToken: authToken, scaffoldKey: _scaffoldKey,
         orderId: widget.order.id,
         sharedPreferences: _sharedPreferences)
       );
@@ -285,7 +285,7 @@ bool _isValidate(String variable) {
     return variable != null && variable != '' && variable.isNotEmpty;
   }
   int  _valid(){
-     
+
     if(isClickLeftButton && !_isValidate(_weightController.text)){
       return 1;
     }
@@ -336,7 +336,7 @@ bool _isValidate(String variable) {
                hasError = true;
                strErr = "please_input_item_infomation";
                return;
-             } else {          
+             } else {
                total += double.parse(item['price'].toString()) * double.parse(item['amount'].toString());
             }
          });
@@ -354,7 +354,7 @@ bool _isValidate(String variable) {
           textColor: Colors.white,
          fontSize: 16.0
        );
-       
+
      }else{
     setState(() {
       _isWaiting = true;
@@ -366,7 +366,7 @@ bool _isValidate(String variable) {
         'width': widthController.text,
         'height': heightController.text
       } : {
-        'length': widget.order.orderPackages['length'], 
+        'length': widget.order.orderPackages['length'],
         'width': widget.order.orderPackages['width'],
         'height': widget.order.orderPackages['height']
       },
@@ -377,7 +377,7 @@ bool _isValidate(String variable) {
       'items' : items,
     };
 
-    
+
     _sharedPreferences = await _prefs;
     String authToken = AuthUtils.getToken(_sharedPreferences);
 
@@ -400,7 +400,7 @@ bool _isValidate(String variable) {
     bool isDelete = await showDialog<bool>(
       context: context,
       builder: (BuildContext context) => new DialogDeletePackageItem(
-      authToken: authToken, scaffoldKey: _scaffoldKey, 
+      authToken: authToken, scaffoldKey: _scaffoldKey,
       sharedPreferences: _sharedPreferences)
     );
     if(isDelete) {
@@ -412,7 +412,7 @@ bool _isValidate(String variable) {
        codItems.removeAt(index);
       if(codItemControllers.isNotEmpty) {
           codItemControllers.removeRange(index * 3, index * 3 + 3);
-      } 
+      }
       });
       for(int i =0 ;i<codItems.length;i++){
         temp.add(new CodItem(
@@ -427,7 +427,7 @@ bool _isValidate(String variable) {
       }
       codItems.clear();
      // setState(() {
-       codItems = temp; 
+       codItems = temp;
        print(codItems.length);
      // });
       // print(codItems.length);
@@ -447,7 +447,7 @@ bool _isValidate(String variable) {
       //       codItemControllers.removeRange(index * 3, index * 3 + 3);
       //   codItems = codItems.map((item) {
       //     int idx = codItems.indexOf(item);
-         
+
       //     if(item.index == idx + 1) {
 
       //     } else {
@@ -456,7 +456,7 @@ bool _isValidate(String variable) {
       //     }
       //     return item;
       //   }).toList();
-          
+
       // }
       // });
     }
@@ -501,9 +501,9 @@ bool _isValidate(String variable) {
       codItemControllers.add(nameController);
       codItemControllers.add(amountController);
       codItemControllers.add(priceController);
-    var now = new DateTime.now().millisecondsSinceEpoch;  
-   
-    setState(() { 
+    var now = new DateTime.now().millisecondsSinceEpoch;
+
+    setState(() {
       codItems.add( new CodItem(index: id+1, nameController: nameController, timeStamp: now, priceController: priceController, amountController: amountController,onDelete: (){_onDelete(id);},));
     });
   }
@@ -516,7 +516,7 @@ bool _isValidate(String variable) {
       list.add(new PackageOrderItem(item: orderPackages['items'][i]));
       if(orderPackages['items'][i]['returnAmount'] > 0) {
         _returnedList.add(new ReturnedOrderItem(item: orderPackages['items'][i]));
-      } 
+      }
     }
 
     double total = 0;
@@ -524,7 +524,7 @@ bool _isValidate(String variable) {
       String extraService = widget.order.orderPackages['extraService'];
       bool isShopPaid = widget.order.orderPackages['isShopPaid'];
       dynamic valueOfOrder = widget.order.valueOfOrder;
-      
+
       dynamic shippingCost = widget.order.shippingCost ?? 0;
       dynamic totalCOD = widget.order.totalCOD ?? 0;
       if(extraService == 'cod') {
@@ -535,7 +535,7 @@ bool _isValidate(String variable) {
         }
       } else {
         if(isShopPaid) {
-          total -= shippingCost;
+          total = shippingCost;
         } else {
           total += (widget.isFromShipperHistory ? shippingCost : 0);
         }
@@ -660,7 +660,7 @@ bool _isValidate(String variable) {
                                               Navigator.push(context, MaterialPageRoute(
                                                 builder: (context) => DeliveryStatus(order: widget.order)
                                               ));
-                                            }, 
+                                            },
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: <Widget>[
@@ -676,7 +676,7 @@ bool _isValidate(String variable) {
                                             )
                                           )
                                         ),
-                                        
+
                                       ],
                                     ),
                                     widget.order.pendingReason != null && widget.order.pendingReason != '' ? SizedBox(height: 10.0,) : Container(),
@@ -693,7 +693,7 @@ bool _isValidate(String variable) {
                                               Navigator.push(context, MaterialPageRoute(
                                                 builder: (context) => DeliveryStatus(order: widget.order)
                                               ));
-                                            }, 
+                                            },
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: <Widget>[
@@ -708,7 +708,7 @@ bool _isValidate(String variable) {
                                             )
                                           )
                                         ),
-                                        
+
                                       ],
                                     ) : Container(),
                                     widget.order.failedReasonFull != null && widget.order.failedReasonFull != '' ? SizedBox(height: 10.0,) : Container(),
@@ -725,7 +725,7 @@ bool _isValidate(String variable) {
                                               Navigator.push(context, MaterialPageRoute(
                                                 builder: (context) => DeliveryStatus(order: widget.order)
                                               ));
-                                            }, 
+                                            },
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: <Widget>[
@@ -740,7 +740,7 @@ bool _isValidate(String variable) {
                                             )
                                           )
                                         ),
-                                        
+
                                       ],
                                     ) : Container(),
                                     widget.order.returnedReason != null && widget.order.returnedReason != '' ? SizedBox(height: 10.0,) : Container(),
@@ -757,7 +757,7 @@ bool _isValidate(String variable) {
                                               Navigator.push(context, MaterialPageRoute(
                                                 builder: (context) => DeliveryStatus(order: widget.order)
                                               ));
-                                            }, 
+                                            },
                                             child: Row(
                                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                               children: <Widget>[
@@ -772,7 +772,7 @@ bool _isValidate(String variable) {
                                             )
                                           )
                                         ),
-                                        
+
                                       ],
                                     ) : Container(),
                                   ],
@@ -1010,12 +1010,12 @@ bool _isValidate(String variable) {
                                                   codItemControllers.clear();
                                                   setState(() {
                                                     _isClickEditPackage = false;
-                                                    
-                                                    
+
+
                                                     codItemCurrent.forEach((item){
                                                       codItems.add(item);
                                                     });
-                                                    
+
                                                     codItemControllersCurrent.forEach((item){
                                                       codItemControllers.add(item);
                                                     });
@@ -1040,7 +1040,7 @@ bool _isValidate(String variable) {
                                     ),
                                     !_isClickEditPackage ? Padding(
                                       padding: const EdgeInsets.only(left: 10.0, right: 10.0, bottom: 16.0),
-                                      child: Column( 
+                                      child: Column(
                                         children: <Widget>[
                                           widget.order.orderPackages['typeOfCalWeight'] != 'actualWeight' ? Row(
                                             children: <Widget>[
@@ -1469,9 +1469,9 @@ bool _isValidate(String variable) {
                                       Padding(
                                         padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                         child: TextField(
-                                          
+
                                           decoration: InputDecoration(
-                                            
+
                                           ),
                                           keyboardType: TextInputType.numberWithOptions(decimal: true),
                                           onChanged: (String value) {
@@ -1487,7 +1487,7 @@ bool _isValidate(String variable) {
                                       ):IgnorePointer(ignoring: true, child: Opacity(opacity: 0.0,),),
                                       SizedBox(height: 16.0,)
                                     ],
-                                      
+
                                     )
                                   ],
                                 ),
@@ -1599,7 +1599,7 @@ bool _isValidate(String variable) {
                         )
                       ),
                     ),
-                    
+
                   ]
                 ),
                 _isWaiting ? Center(
@@ -1708,7 +1708,7 @@ class ShipperInformation extends StatelessWidget {
                         )
                       ],
                     ),
-                    
+
                   ],
                 ),
               )
@@ -1864,7 +1864,7 @@ class DialogDeletePackageItem extends StatelessWidget {
               Flexible(
                 child:
               Text(allTranslations.text('title_alert_delete_package_item'),
-            
+
               style: TextStyle(
                 color: Color.fromRGBO(20, 156, 206, 1),
                 fontWeight: FontWeight.bold,

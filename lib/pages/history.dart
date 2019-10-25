@@ -85,7 +85,10 @@ class _HistoryState extends State<History> {
                       children: <Widget>[
                         Icon(Icons.check, color: Colors.green),
                         SizedBox(width: 8,),
-                        Text(allTranslations.text('completed'), style: TextStyle(fontSize: 12.0),)
+                        Flexible(
+                          fit: FlexFit.tight,
+                          child: Text(allTranslations.text('completed'),maxLines: 1, overflow: TextOverflow.fade,style: TextStyle(fontSize: 12.0),),
+                        ),
                       ],
                     ),),
                     Tab(child: Row(
@@ -122,7 +125,7 @@ class _HistoryState extends State<History> {
         bottomNavigationBar: BottomNavigationBar(
             items: <BottomNavigationBarItem>[
               BottomNavigationBarItem(
-                icon: Icon(Icons.calendar_today), 
+                icon: Icon(Icons.calendar_today),
                 title: _selectedIndex == 0 ? GradientText(
                   allTranslations.text('history_tab'),
                   gradient: LinearGradient(
@@ -130,7 +133,7 @@ class _HistoryState extends State<History> {
                       Color.fromRGBO(0, 153, 204, 1)]),
                   textAlign: TextAlign.center) : Text(allTranslations.text('history_tab'),)
               ),
-              BottomNavigationBarItem(icon: Icon(Icons.home), 
+              BottomNavigationBarItem(icon: Icon(Icons.home),
                 title: _selectedIndex == 1 ? GradientText(
                   allTranslations.text('home_tab'),
                   gradient: LinearGradient(
@@ -138,7 +141,7 @@ class _HistoryState extends State<History> {
                       Color.fromRGBO(0, 153, 204, 1)]),
                   textAlign: TextAlign.center) : Text(allTranslations.text('home_tab'))
               ),
-              BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet), 
+              BottomNavigationBarItem(icon: Icon(Icons.account_balance_wallet),
                 title: _selectedIndex == 2 ? GradientText("Income",
                   //allTranslations.text('income_tab'),
                   gradient: LinearGradient(
@@ -147,7 +150,7 @@ class _HistoryState extends State<History> {
                   textAlign: TextAlign.center) : Text("Income"//allTranslations.text('income_tab')
                   )
               ),
-              BottomNavigationBarItem(icon: Icon(Icons.more_horiz), 
+              BottomNavigationBarItem(icon: Icon(Icons.more_horiz),
                 title: _selectedIndex == 3 ? GradientText(
                   allTranslations.text('more_tab'),
                   gradient: LinearGradient(
@@ -167,8 +170,8 @@ class _HistoryState extends State<History> {
             unselectedLabelStyle: TextStyle(fontSize:12 ),
             showUnselectedLabels: true,
             type: BottomNavigationBarType.fixed,
-          ), 
+          ),
       )
-    );  
+    );
   }
 }
