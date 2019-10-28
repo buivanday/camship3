@@ -1,4 +1,4 @@
-package com.farax.camships;
+package com.camship.camships;
 
 import android.content.ContentResolver;
 import android.content.Context;
